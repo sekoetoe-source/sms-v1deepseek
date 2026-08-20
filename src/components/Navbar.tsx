@@ -10,6 +10,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { SchoolProfile } from '../types';
+import { BanyubiruLogo } from './BanyubiruLogo';
 
 interface NavbarProps {
   currentView: 'landing' | 'workspace';
@@ -34,11 +35,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigate('landing')}
             className="flex items-center gap-3 group text-left focus:outline-none"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#031534] via-[#091b3a] to-[#00B894] p-[2px] shadow-sm group-hover:scale-105 transition-transform">
-              <div className="w-full h-full bg-[#031534] rounded-[10px] flex items-center justify-center text-white font-bold text-lg">
-                <span className="text-[#00B894]">B</span>
-              </div>
-            </div>
+            <BanyubiruLogo 
+              banyubiruLogoUrl={school.banyubiruLogoUrl} 
+              size="md"
+              className="group-hover:scale-105 transition-transform"
+            />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-[#031534] text-lg tracking-tight font-display">

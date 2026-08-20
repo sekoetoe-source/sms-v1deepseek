@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { SchoolProfile, Student } from '../types';
 import { PRESET_SAMPLE_DOCS } from '../data/mockData';
+import { BanyubiruLogo } from './BanyubiruLogo';
 
 interface LandingPageProps {
   onOpenWorkspace: (tab?: string) => void;
@@ -958,10 +959,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-[#00B894] flex items-center justify-center text-[#031534] font-bold">
-                B
-              </div>
+            <div className="flex items-center gap-2.5">
+              <BanyubiruLogo 
+                banyubiruLogoUrl={school.banyubiruLogoUrl} 
+                size="sm"
+              />
               <span className="font-bold text-lg">SMS Banyubiru</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
