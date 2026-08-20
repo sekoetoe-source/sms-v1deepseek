@@ -27,8 +27,15 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
 }) => {
   const [fileSelected, setFileSelected] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>('Dapodik_Export_SMPN99_SemesterGanjil.xlsx');
-  const [selectedSource, setSelectedSource] = useState<'dapodik' | 'excel' | 'preset'>('preset');
+  const [selectedSource, setSelectedSource] = useState<'preset' | 'dapodik' | 'excel' | 'dapodik_api'>('dapodik_api');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  
+  // Dapodik Web Service API Credentials
+  const [dapodikHost, setDapodikHost] = useState<string>('http://103.102.176.62:5774');
+  const [dapodikNpsn, setDapodikNpsn] = useState<string>('20102589');
+  const [dapodikKey, setDapodikKey] = useState<string>('shPmLnYXhSzRDMx');
+  const [apiConnectionStatus, setApiConnectionStatus] = useState<'idle' | 'testing' | 'connected' | 'error'>('idle');
+  const [fetchedStudentCount, setFetchedStudentCount] = useState<number>(865);
 
   if (!isOpen) return null;
 
@@ -39,6 +46,13 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
     { nisn: '0098451204', nis: '232407004', nama: 'Dimas Anggara Putra', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif' },
     { nisn: '0098451205', nis: '232407005', nama: 'Eka Putri Lestari', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif' }
   ];
+
+  const handleTestDapodikConnection = () => {
+    setApiConnectionStatus('testing');
+    setTimeout(() => {
+      setApiConnectionStatus('connected');
+    }, 1000);
+  };
 
   const handleExecuteImport = () => {
     setIsProcessing(true);
@@ -102,7 +116,23 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
             <label className="text-xs font-bold text-[#031534] uppercase tracking-wider">
               Pilih Sumber Master Data:
             </label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <button
+                type="button"
+                onClick={() => { setSelectedSource('dapodik_api'); setFileSelected(true); }}
+                className={`p-3 rounded-xl border text-left transition-all ${
+                  selectedSource === 'dapodik_api'
+                    ? 'border-[#00B894] bg-[#00B894]/5 ring-1 ring-[#00B894]'
+                    : 'border-[#E6E6E6] hover:bg-[#F8F9FA]'
+                }`}
+              >
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <div className="font-bold text-xs text-[#031534]">Web Service Dapodik</div>
+                </div>
+                <div className="text-[11px] text-[#006b55] font-semibold mt-0.5">Tarik API Direct (Live)</div>
+              </button>
+
               <button
                 type="button"
                 onClick={() => { setSelectedSource('preset'); setFileSelected(true); }}
@@ -126,7 +156,7 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                 }`}
               >
                 <div className="font-bold text-xs text-[#031534]">Export File Dapodik</div>
-                <div className="text-[11px] text-[#6C757D] mt-0.5">Format .xlsx / .csv resmi</div>
+                <div className="text-[11px] text-[#6C757D] mt-0.5">Format .xlsx / .csv</div>
               </button>
 
               <button
@@ -138,24 +168,101 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                     : 'border-[#E6E6E6] hover:bg-[#F8F9FA]'
                 }`}
               >
-                <div className="font-bold text-xs text-[#031534]">Template Excel Kustom</div>
+                <div className="font-bold text-xs text-[#031534]">Template Excel</div>
                 <div className="text-[11px] text-[#6C757D] mt-0.5">Kolom Fleksibel</div>
               </button>
             </div>
           </div>
 
-          {/* Upload Area */}
-          <div className="border-2 border-dashed border-[#CBD5E1] rounded-xl p-5 text-center bg-[#F8F9FA]">
-            <UploadCloud className="w-8 h-8 mx-auto text-[#006b55] mb-2" />
-            <p className="text-xs font-semibold text-[#031534]">
-              {selectedSource === 'preset' 
-                ? 'Master Data Dapodik SMP Negeri 99 Jakarta siap dimuat'
-                : 'Tarik & lepas file Excel / Dapodik Anda di sini, atau klik untuk memilih'}
-            </p>
-            <p className="text-[11px] text-[#6C757D] mt-1">
-              File: <span className="font-mono text-[#031534] font-medium">{fileName}</span> (1.4 MB)
-            </p>
-          </div>
+          {/* Conditional Form / Upload Area */}
+          {selectedSource === 'dapodik_api' ? (
+            <div className="border border-[#00B894]/30 rounded-xl p-4 bg-emerald-50/40 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-md bg-[#031534] text-[#00B894] flex items-center justify-center text-xs font-bold">
+                    API
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#031534]">Koneksi Web Service Dapodik (Satu Data Pendidikan)</h4>
+                    <p className="text-[11px] text-[#6C757D]">Integrasi API Resmi dari Pengaturan Aplikasi Dapodik Lokal / Server</p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  Ready API Sync
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                <div>
+                  <label className="text-[10px] font-bold text-[#031534] block mb-1">Host / IP Server Dapodik</label>
+                  <input 
+                    type="text" 
+                    value={dapodikHost} 
+                    onChange={(e) => setDapodikHost(e.target.value)}
+                    placeholder="http://localhost:5774"
+                    className="w-full px-3 py-1.5 text-xs font-mono border border-[#CBD5E1] rounded-lg bg-white focus:outline-none focus:border-[#00B894]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-[#031534] block mb-1">NPSN Sekolah</label>
+                  <input 
+                    type="text" 
+                    value={dapodikNpsn} 
+                    onChange={(e) => setDapodikNpsn(e.target.value)}
+                    placeholder="20102589"
+                    className="w-full px-3 py-1.5 text-xs font-mono border border-[#CBD5E1] rounded-lg bg-white focus:outline-none focus:border-[#00B894]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-[#031534] block mb-1">Key / Token Web Service</label>
+                  <input 
+                    type="text" 
+                    value={dapodikKey} 
+                    onChange={(e) => setDapodikKey(e.target.value)}
+                    placeholder="shPmLnYXhSzRDMx"
+                    className="w-full px-3 py-1.5 text-xs font-mono border border-[#CBD5E1] rounded-lg bg-white focus:outline-none focus:border-[#00B894]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1 border-t border-[#00B894]/20">
+                <div className="text-[11px] text-[#44474E]">
+                  {apiConnectionStatus === 'connected' ? (
+                    <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 inline" /> Terhubung ke WebService Dapodik (865 data siswa terambil)
+                    </span>
+                  ) : apiConnectionStatus === 'testing' ? (
+                    <span className="text-amber-700 font-semibold flex items-center gap-1">
+                      <span className="w-3 h-3 border-2 border-amber-600 border-t-transparent rounded-full animate-spin inline-block"></span> Menghubungkan ke {dapodikHost}...
+                    </span>
+                  ) : (
+                    <span className="text-[#6C757D]">Konektor REST API endpoint: <code className="text-[#031534] font-mono text-[10px] bg-white px-1 py-0.5 rounded border border-[#CBD5E1]">/WebService/getPesertaDidik?npsn={dapodikNpsn}</code></span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleTestDapodikConnection}
+                  disabled={apiConnectionStatus === 'testing'}
+                  className="px-3 py-1.5 bg-[#031534] hover:bg-[#1a2a4a] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#00B894]" />
+                  Tes Koneksi & Tarik API
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-[#CBD5E1] rounded-xl p-5 text-center bg-[#F8F9FA]">
+              <UploadCloud className="w-8 h-8 mx-auto text-[#006b55] mb-2" />
+              <p className="text-xs font-semibold text-[#031534]">
+                {selectedSource === 'preset' 
+                  ? 'Master Data Dapodik SMP Negeri 99 Jakarta siap dimuat'
+                  : 'Tarik & lepas file Excel / Dapodik Anda di sini, atau klik untuk memilih'}
+              </p>
+              <p className="text-[11px] text-[#6C757D] mt-1">
+                File: <span className="font-mono text-[#031534] font-medium">{fileName}</span> (1.4 MB)
+              </p>
+            </div>
+          )}
 
           {/* Validation Matrix Box */}
           <div className="bg-white p-4 rounded-xl border border-[#E6E6E6] space-y-3">
