@@ -48,7 +48,7 @@ export const HumanInTheLoopSection: React.FC = () => {
   return (
     <section
       id="human-in-the-loop-section"
-      className="px-4 sm:px-6 max-w-5xl mx-auto mb-12 sm:mb-16"
+      className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto mb-12 sm:mb-16"
     >
       <div className="bg-[#eff4ff] rounded-2xl p-5 sm:p-7 border border-[#c6c6cd] shadow-xs overflow-hidden">
         {/* Section Header */}

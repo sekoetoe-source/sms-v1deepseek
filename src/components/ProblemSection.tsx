@@ -32,7 +32,7 @@ export const ProblemSection: React.FC = () => {
   return (
     <section
       id="problem-statement-section"
-      className="px-4 sm:px-6 max-w-5xl mx-auto mb-12 sm:mb-16"
+      className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto mb-12 sm:mb-16"
     >
       <div className="text-center mb-6">
         <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#006b55]">

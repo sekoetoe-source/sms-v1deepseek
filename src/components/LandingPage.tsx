@@ -106,7 +106,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         {/* Subtle Architectural Grid Background */}
         <div className="absolute inset-0 opacity-15 pointer-events-none architectural-grid"></div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             
             {/* Hero Left Text & Controls */}
@@ -258,7 +258,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
       {/* 2. KEY STATS BANNER */}
       <section className="bg-[#031534] text-white py-10 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             
             <div className="space-y-1">
@@ -303,82 +303,90 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <BentoFeaturesSection />
 
       {/* 7. FEATURE GRID SECTION */}
-      <section id="fitur" className="py-20 bg-[#F8F9FA]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section id="fitur" className="py-12 bg-[#F8F9FA]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
-          <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-[#006b55]">
+          <div className="text-center space-y-2 max-w-2xl mx-auto">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#006b55]">
               SOLUSI ADMINISTRASI MODERN
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#031534] tracking-tight font-display">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#031534] tracking-tight font-display">
               Fitur Unggulan SMS Banyubiru
             </h2>
-            <p className="text-sm sm:text-base text-[#6C757D]">
+            <p className="text-xs sm:text-sm text-[#6C757D]">
               Dirancang khusus untuk membantu Sekolah Menengah Pertama (SMP) dalam mempercepat pengolahan berkas fisik tanpa risiko duplikasi data.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
             
             {/* Feature 1 */}
-            <div className="bg-white p-6 rounded-2xl border border-[#E6E6E6] shadow-xs hover:shadow-md transition-all space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#031534] text-[#00B894] flex items-center justify-center">
-                <ScanLine className="w-6 h-6" />
+            <div className="bg-white p-5 rounded-xl border border-[#E6E6E6] shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-full">
+              <div>
+                <div className="w-10 h-10 rounded-lg bg-[#031534] text-[#00B894] flex items-center justify-center mb-3 shadow-2xs">
+                  <ScanLine className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-base text-[#031534] mb-1.5">
+                  1. AI OCR Engine Pilihan
+                </h3>
+                <p className="text-xs text-[#6C757D] leading-relaxed">
+                  Membaca formulir fisik, lembar absensi harian, dan surat izin tulisan tangan dengan konversi teks digital otomatis.
+                </p>
               </div>
-              <h3 className="font-bold text-lg text-[#031534]">
-                1. AI OCR Engine Pilihan
-              </h3>
-              <p className="text-xs text-[#6C757D] leading-relaxed">
-                Membaca formulir fisik, lembar absensi harian, dan surat izin tulisan tangan dengan konversi teks digital otomatis.
-              </p>
-              <div className="pt-2 border-t border-[#E6E6E6] text-[11px] font-bold text-[#006b55]">
+              <div className="mt-4 pt-2.5 border-t border-[#E6E6E6] text-[11px] font-bold text-[#006b55]">
                 ✓ Auto-rotate &amp; noise correction
               </div>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-white p-6 rounded-2xl border border-[#E6E6E6] shadow-xs hover:shadow-md transition-all space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#031534] text-[#00E5FF] flex items-center justify-center">
-                <Database className="w-6 h-6" />
+            <div className="bg-white p-5 rounded-xl border border-[#E6E6E6] shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-full">
+              <div>
+                <div className="w-10 h-10 rounded-lg bg-[#031534] text-[#00E5FF] flex items-center justify-center mb-3 shadow-2xs">
+                  <Database className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-base text-[#031534] mb-1.5">
+                  2. Dapodik Fuzzy Matcher
+                </h3>
+                <p className="text-xs text-[#6C757D] leading-relaxed">
+                  Menghubungkan teks hasil OCR secara otomatis dengan database resmi Dapodik untuk verifikasi NISN &amp; nama siswa.
+                </p>
               </div>
-              <h3 className="font-bold text-lg text-[#031534]">
-                2. Dapodik Fuzzy Matcher
-              </h3>
-              <p className="text-xs text-[#6C757D] leading-relaxed">
-                Menghubungkan teks hasil OCR secara otomatis dengan database resmi Dapodik untuk verifikasi NISN &amp; nama siswa.
-              </p>
-              <div className="pt-2 border-t border-[#E6E6E6] text-[11px] font-bold text-[#006b55]">
+              <div className="mt-4 pt-2.5 border-t border-[#E6E6E6] text-[11px] font-bold text-[#006b55]">
                 ✓ Toleransi ejaan &amp; pengetikan
               </div>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-white p-6 rounded-2xl border border-[#E6E6E6] shadow-xs hover:shadow-md transition-all space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#031534] text-[#FFD000] flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6" />
+            <div className="bg-white p-5 rounded-xl border border-[#E6E6E6] shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-full">
+              <div>
+                <div className="w-10 h-10 rounded-lg bg-[#031534] text-[#FFD000] flex items-center justify-center mb-3 shadow-2xs">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-base text-[#031534] mb-1.5">
+                  3. Verification Workspace
+                </h3>
+                <p className="text-xs text-[#6C757D] leading-relaxed">
+                  Panel peninjauan layar ganda (*Dual Screen*) untuk operator memverifikasi atau mengoreksi data dalam hitungan detik.
+                </p>
               </div>
-              <h3 className="font-bold text-lg text-[#031534]">
-                3. Verification Workspace
-              </h3>
-              <p className="text-xs text-[#6C757D] leading-relaxed">
-                Panel peninjauan layar ganda (*Dual Screen*) untuk operator memverifikasi atau mengoreksi data dalam hitungan detik.
-              </p>
-              <div className="pt-2 border-t border-[#E6E6E6] text-[11px] font-bold text-[#006b55]">
+              <div className="mt-4 pt-2.5 border-t border-[#E6E6E6] text-[11px] font-bold text-[#006b55]">
                 ✓ Human-in-the-loop review
               </div>
             </div>
 
             {/* Feature 4 */}
-            <div className="bg-white p-6 rounded-2xl border border-[#E6E6E6] shadow-xs hover:shadow-md transition-all space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#031534] text-[#00B894] flex items-center justify-center">
-                <FileSpreadsheet className="w-6 h-6" />
+            <div className="bg-white p-5 rounded-xl border border-[#E6E6E6] shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-full">
+              <div>
+                <div className="w-10 h-10 rounded-lg bg-[#031534] text-[#00B894] flex items-center justify-center mb-3 shadow-2xs">
+                  <FileSpreadsheet className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-base text-[#031534] mb-1.5">
+                  4. Ekspor Excel &amp; Laporan PDF
+                </h3>
+                <p className="text-xs text-[#6C757D] leading-relaxed">
+                  Menghasilkan berkas rekapitulasi Excel siap cetak dan laporan resmi ber-kop sekolah yang siap ditandatangani.
+                </p>
               </div>
-              <h3 className="font-bold text-lg text-[#031534]">
-                4. Ekspor Excel &amp; Laporan PDF
-              </h3>
-              <p className="text-xs text-[#6C757D] leading-relaxed">
-                Menghasilkan berkas rekapitulasi Excel siap cetak dan laporan resmi ber-kop sekolah yang siap ditandatangani.
-              </p>
               <div className="pt-2 border-t border-[#E6E6E6] text-[11px] font-bold text-[#006b55]">
                 ✓ Format resmi Permendikbud
               </div>
@@ -616,8 +624,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <CtaSection onOpenDemo={() => handleOpenDemoModal()} />
 
       {/* 9. FOOTER */}
-      <footer className="bg-[#020b1a] text-white px-6 sm:px-12 py-16 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="bg-[#020b1a] text-white px-6 sm:px-12 py-12 border-t border-slate-800">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           
           <div className="space-y-4">
             <div className="flex items-center gap-3">
