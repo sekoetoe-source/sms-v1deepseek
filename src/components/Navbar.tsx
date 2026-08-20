@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { SchoolProfile } from '../types';
 import { BanyubiruLogo } from './BanyubiruLogo';
-import { SchoolLogo } from './SchoolLogo';
 
 interface NavbarProps {
   currentView: 'landing' | 'workspace';
@@ -50,19 +49,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </div>
           </button>
-
-          {/* Active School Badge */}
-          <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-[#E6E6E6] text-xs">
-            <SchoolLogo logoUrl={school.logoUrl} size="sm" />
-            <div className="flex flex-col justify-center leading-none">
-              <span className="font-extrabold text-[#031534] text-xs sm:text-sm tracking-tight whitespace-nowrap">
-                {school.name}
-              </span>
-              <span className="text-[#6C757D] font-mono text-[10px] pt-0.5">
-                NPSN: {school.npsn}
-              </span>
-            </div>
-          </div>
         </div>
 
         {/* Navigation Links for Landing */}
