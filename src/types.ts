@@ -1,3 +1,24 @@
+export type GtkJenis = 
+  | 'Kepala Sekolah'
+  | 'Guru Mata Pelajaran' 
+  | 'Guru Kelas' 
+  | 'Guru BK' 
+  | 'Tenaga Kependidikan / Administrasi';
+
+export interface GtkStaff {
+  gtk_id: string;
+  source_id: string; // Dapodik UUID or NUPTK
+  nama: string;
+  nuptk?: string;
+  nip?: string;
+  jenis_ptk: GtkJenis;
+  status_kepegawaian: string; // e.g. PNS, PPPK, GTY, Honor Sekolah
+  gender: 'L' | 'P';
+  pendidikan_terakhir?: string;
+  status: 'Aktif' | 'Nonaktif';
+  email?: string;
+}
+
 export type StudentStatus = 'Aktif' | 'Nonaktif' | 'Mutasi' | 'Lulus';
 
 export interface Student {
