@@ -89,10 +89,7 @@ export const BanyubiruLogo: React.FC<BanyubiruLogoProps> = ({
   className = '',
   showText = false
 }) => {
-  const [imageError, setImageError] = useState(false);
-
-  // Default to Banyubiru Digital Services official logo URL
-  const targetUrl = banyubiruLogoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDfmbXYOYq3g1iSHP98eNxY2qkfRsivX4ioYt8vlctnDVL5FJlRPoS7LZdFlNRNAVlrrzFYQjEKKN6VZn0vw_cRj2lSS5iFBvCiEcL6QdQ5VfDy1l_StC_u345yNc_PrW1PlxbpCbO9gt_jdR6dxtD3U1rFQcMgdlO1K-AB4nsqKkGIzYflXYsN2ffmznEuVR5fzYuOr7-LUN3C2dh1EdBcnEaxSDAqtgdOH_TzDDQozQc2EZfUd65-a1pI2LXNQ2gJu-k';
+  const [useImage, setUseImage] = useState(false); // Default to crystal clear SVG vector renderer
 
   const sizeClasses = {
     sm: 'w-8 h-8 rounded-xl p-1',
@@ -103,12 +100,12 @@ export const BanyubiruLogo: React.FC<BanyubiruLogoProps> = ({
 
   return (
     <div className={`bg-[#031534] border-2 border-[#00E5FF]/60 shadow-lg shadow-[#00E5FF]/20 overflow-hidden flex items-center justify-center flex-shrink-0 ${sizeClasses} ${className}`}>
-      {!imageError ? (
+      {useImage && banyubiruLogoUrl ? (
         <img 
-          src={targetUrl} 
+          src={banyubiruLogoUrl} 
           alt="Logo Banyubiru Digital Services" 
           className="w-full h-full object-contain"
-          onError={() => setImageError(true)}
+          onError={() => setUseImage(false)}
         />
       ) : (
         <BanyubiruLogoSvg showText={showText} />
