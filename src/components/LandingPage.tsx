@@ -106,7 +106,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         {/* Subtle Architectural Grid Background */}
         <div className="absolute inset-0 opacity-15 pointer-events-none architectural-grid"></div>
         
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             
             {/* Hero Left Text & Controls */}
@@ -258,7 +258,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
       {/* 2. KEY STATS BANNER */}
       <section className="bg-[#031534] text-white py-10 border-b border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             
             <div className="space-y-1">
@@ -304,7 +304,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
       {/* 7. FEATURE GRID SECTION */}
       <section id="fitur" className="py-12 bg-[#F8F9FA]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           <div className="text-center space-y-2 max-w-2xl mx-auto">
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#006b55]">
@@ -624,8 +624,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <CtaSection onOpenDemo={() => handleOpenDemoModal()} />
 
       {/* 9. FOOTER */}
-      <footer className="bg-[#020b1a] text-white px-6 sm:px-12 py-12 border-t border-slate-800">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="bg-[#020b1a] text-white py-12 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
           
           <div className="space-y-4">
             <div className="flex items-center gap-3">

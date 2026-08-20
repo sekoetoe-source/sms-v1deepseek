@@ -61,7 +61,7 @@ export const DashboardPreview: React.FC<DashboardPreviewProps> = ({
   return (
     <section
       id="dashboard-preview-section"
-      className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto mb-10 sm:mb-14 relative"
+      className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-10 sm:mb-14 relative"
     >
       <div
         id="mac-browser-window"

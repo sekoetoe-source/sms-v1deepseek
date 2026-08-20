@@ -9,7 +9,7 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ onOpenDemo }) => {
   return (
     <section
       id="cta-section"
-      className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto mb-12 sm:mb-16"
+      className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12 sm:mb-16"
     >
       <div
         id="cta-card-container"
