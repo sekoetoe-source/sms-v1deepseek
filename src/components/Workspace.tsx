@@ -1417,69 +1417,8 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                             : 'bg-white border border-[#E6E6E6] hover:border-amber-300'
                         }`}
                       >
-                        {/* Edit Mode */}
-                        {isEditing ? (
-                          <div className="space-y-3 bg-[#F8F9FA] p-3 rounded-lg border border-[#E6E6E6]">
-                            <div className="font-bold text-xs text-[#031534]">Koreksi Nilai Lapangan:</div>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div>
-                                <label className="text-[10px] text-[#6C757D] block">Nama Siswa:</label>
-                                <input 
-                                  type="text" 
-                                  value={editFormData.nama} 
-                                  onChange={(e) => setEditFormData({ ...editFormData, nama: e.target.value })}
-                                  className="w-full p-1.5 border rounded text-xs"
-                                />
-                              </div>
-                              <div>
-                                <label className="text-[10px] text-[#6C757D] block">Kelas:</label>
-                                <input 
-                                  type="text" 
-                                  value={editFormData.kelas} 
-                                  onChange={(e) => setEditFormData({ ...editFormData, kelas: e.target.value })}
-                                  className="w-full p-1.5 border rounded text-xs"
-                                />
-                              </div>
-                              <div>
-                                <label className="text-[10px] text-[#6C757D] block">Status:</label>
-                                <input 
-                                  type="text" 
-                                  value={editFormData.status} 
-                                  onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
-                                  className="w-full p-1.5 border rounded text-xs"
-                                />
-                              </div>
-                              <div>
-                                <label className="text-[10px] text-[#6C757D] block">Catatan / Keterangan:</label>
-                                <input 
-                                  type="text" 
-                                  value={editFormData.catatan} 
-                                  onChange={(e) => setEditFormData({ ...editFormData, catatan: e.target.value })}
-                                  className="w-full p-1.5 border rounded text-xs"
-                                />
-                              </div>
-                            </div>
-                            <div className="flex justify-end gap-2 pt-1">
-                              <button 
-                                onClick={() => setEditingRecordId(null)}
-                                className="px-3 py-1 text-xs text-[#6C757D] hover:bg-slate-200 rounded"
-                              >
-                                Batal
-                              </button>
-                              <button 
-                                onClick={() => handleSaveEditRecord(rec.id)}
-                                className="px-3 py-1 bg-[#031534] text-white text-xs font-bold rounded hover:bg-[#1a2a4a]"
-                              >
-                                Simpan Perubahan
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          /* View Mode */
-                          <div>
-                            
-                            {/* Line Header */}
-                            <div className="flex items-start justify-between gap-3">
+                        {/* Line Header */}
+                        <div className="flex items-start justify-between gap-3">
                               <div className="space-y-1">
                                 
                                 {/* Matched Student Main Tag */}
@@ -1604,12 +1543,9 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                                 ))}
                               </div>
                             )}
-
                           </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                        );
+                      })}
                 </div>
 
                 {/* Bottom Quick Export Trigger */}
