@@ -47,6 +47,7 @@ import { SchoolLogo } from './SchoolLogo';
 import { matchStudentAgainstMaster } from '../utils/fuzzyMatch';
 import { PRESET_SAMPLE_DOCS } from '../data/mockData';
 import { ManualMatchModal } from './ManualMatchModal';
+import { PdfPreviewModal } from './PdfPreviewModal';
 
 interface WorkspaceProps {
   initialTab?: string;
@@ -159,6 +160,17 @@ export const Workspace: React.FC<WorkspaceProps> = ({
 
   // Export Tab State
   const [exportDocFilter, setExportDocFilter] = useState<string>('ALL');
+
+  // PDF Preview Modal State
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState<boolean>(false);
+  const [pdfTargetDocument, setPdfTargetDocument] = useState<SchoolDocument | null>(null);
+
+  const handleOpenPdfPreview = (docToPreview?: SchoolDocument) => {
+    const target = docToPreview || activeDocument;
+    if (!target) return;
+    setPdfTargetDocument(target);
+    setIsPdfModalOpen(true);
+  };
 
   // Currently active document object
   const activeDocument = useMemo(() => {
@@ -1303,6 +1315,14 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                   <Check className="w-4 h-4" />
                   Konfirmasi Semua Baris
                 </button>
+
+                <button
+                  onClick={() => handleOpenPdfPreview(activeDocument)}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-lg transition-all shadow-xs flex items-center gap-1.5"
+                >
+                  <FileText className="w-4 h-4" />
+                  Pratinjau PDF
+                </button>
               </div>
 
             </div>
@@ -1886,11 +1906,11 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 </button>
 
                 <button
-                  onClick={() => exportToPDF(activeDocument, activeDocument.records, school)}
+                  onClick={() => handleOpenPdfPreview(activeDocument)}
                   className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2"
                 >
                   <FileText className="w-4 h-4" />
-                  Ekspor Dokumen PDF Resmi
+                  Pratinjau PDF Ber-Kop Surat
                 </button>
               </div>
             </div>
@@ -2237,6 +2257,15 @@ export const Workspace: React.FC<WorkspaceProps> = ({
           onSelectStudent={handleSelectCandidateStudent}
         />
       )}
+
+      {/* PDF POP-UP PREVIEW MODAL */}
+      <PdfPreviewModal
+        isOpen={isPdfModalOpen}
+        onClose={() => setIsPdfModalOpen(false)}
+        document={pdfTargetDocument || activeDocument}
+        records={pdfTargetDocument ? pdfTargetDocument.records : activeDocument.records}
+        school={school}
+      />
 
     </div>
   );
