@@ -33,13 +33,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center">
           <button 
             onClick={() => onNavigate('landing')}
-            className="flex items-center gap-2.5 group focus:outline-none shrink-0 bg-[#020b1a] px-3.5 py-2 rounded-xl border border-[#00E5FF]/40 shadow-2xs group-hover:border-[#00E5FF] group-hover:shadow-[0_0_12px_rgba(0,229,255,0.25)] transition-all"
+            className="flex items-center group focus:outline-none shrink-0 bg-[#020b1a] px-4 py-2 rounded-xl border border-[#00E5FF]/40 shadow-2xs group-hover:border-[#00E5FF] group-hover:shadow-[0_0_12px_rgba(0,229,255,0.25)] transition-all"
           >
-            <img 
-              src={school.banyubiruLogoUrl} 
-              alt="Logo 3D Banyubiru" 
-              className="h-6 w-auto object-contain shrink-0 group-hover:scale-105 transition-transform" 
-            />
             <BanyubiruBrandLogo size="sm" />
           </button>
         </div>
