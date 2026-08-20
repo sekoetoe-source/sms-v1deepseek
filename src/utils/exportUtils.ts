@@ -20,11 +20,11 @@ export function exportToExcel(
   // Build Sheet Rows
   const sheetData: any[] = [];
 
-  // Header Metadata
-  sheetData.push(['PEMERINTAH PROVINSI DKI JAKARTA']);
-  sheetData.push(['DINAS PENDIDIKAN']);
+  // Header Metadata (Kop Surat Resmi)
   sheetData.push([school.name.toUpperCase()]);
-  sheetData.push([`${school.address}, ${school.subdistrict}, ${school.city} - NPSN: ${school.npsn}`]);
+  sheetData.push([school.address]);
+  sheetData.push([`Telp. ${school.phone || '021.4891456'} Fax. ${school.fax || '47881356'}`]);
+  sheetData.push([`Email: ${school.email || 'smpn99dki@yahoo.co.id'} | Website: ${school.website || 'https://smpn99jkt.sch.id'}`]);
   sheetData.push([]);
   sheetData.push(['LAPORAN REKAPITULASI DOKUMEN ADMINISTRASI SISWA']);
   sheetData.push(['Jenis Dokumen:', document.documentType]);
@@ -135,22 +135,19 @@ export function exportToPDF(
   const pageWidth = doc.internal.pageSize.getWidth();
   let y = 16;
 
-  // Header Letterhead (Kop Surat Resmi)
+  // Header Letterhead (Kop Surat Resmi SMP NEGERI 99 JAKARTA)
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.text('PEMERINTAH PROVINSI DAERAH KHUSUS IBUKOTA JAKARTA', pageWidth / 2, y, { align: 'center' });
-  y += 5;
-  doc.text('DINAS PENDIDIKAN', pageWidth / 2, y, { align: 'center' });
-  y += 6;
-  doc.setFontSize(14);
+  doc.setFontSize(16);
   doc.text(school.name.toUpperCase(), pageWidth / 2, y, { align: 'center' });
-  y += 5;
+  y += 5.5;
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
-  doc.text(`${school.address}, ${school.subdistrict}, ${school.city}, ${school.province} ${school.postalCode}`, pageWidth / 2, y, { align: 'center' });
+  doc.setFontSize(9);
+  doc.text(school.address, pageWidth / 2, y, { align: 'center' });
+  y += 4.5;
+  doc.text(`Telp. ${school.phone || '021.4891456'} Fax. ${school.fax || '47881356'}`, pageWidth / 2, y, { align: 'center' });
+  y += 4.5;
+  doc.text(`Email: ${school.email || 'smpn99dki@yahoo.co.id'} | Website: ${school.website || 'https://smpn99jkt.sch.id'}`, pageWidth / 2, y, { align: 'center' });
   y += 4;
-  doc.text(`NPSN: ${school.npsn} | Akreditasi: ${school.accreditation} | Email: info@smpn99jakarta.sch.id`, pageWidth / 2, y, { align: 'center' });
-  y += 3;
 
   // Double Divider Line
   doc.setLineWidth(0.8);

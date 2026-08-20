@@ -1,14 +1,18 @@
 import { Student, SchoolDocument, SchoolProfile, AuditLog } from '../types';
 
 export const INITIAL_SCHOOL_PROFILE: SchoolProfile = {
-  name: 'SMP Negeri 99 Jakarta',
+  name: 'SMP NEGERI 99 JAKARTA',
   npsn: '20102589',
   accreditation: 'A (Unggul)',
-  address: 'Jl. Utan Kayu Raya No. 45, Matraman',
-  subdistrict: 'Matraman',
+  address: 'Jalan Sirap, Kelurahan Kayu Putih, Kecamatan Pulo Gadung',
+  subdistrict: 'Pulo Gadung',
   city: 'Jakarta Timur',
   province: 'DKI Jakarta',
-  postalCode: '13120',
+  postalCode: '13210',
+  phone: '021.4891456',
+  fax: '47881356',
+  email: 'smpn99dki@yahoo.co.id',
+  website: 'https://smpn99jkt.sch.id',
   headmasterName: 'Drs. H. Bambang Suprayitno, M.Pd.',
   headmasterNip: '19680512 199303 1 004',
   operatorName: 'Antonius Yudha B. Purnomo, S.Kom.',

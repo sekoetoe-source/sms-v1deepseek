@@ -121,6 +121,10 @@ export interface SchoolProfile {
   city: string;
   province: string;
   postalCode: string;
+  phone?: string;
+  fax?: string;
+  email?: string;
+  website?: string;
   headmasterName: string;
   headmasterNip: string;
   operatorName: string;

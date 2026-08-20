@@ -1867,6 +1867,35 @@ export const Workspace: React.FC<WorkspaceProps> = ({
               </p>
             </div>
 
+            {/* Kop Surat Official Preview Box */}
+            <div className="bg-white p-6 rounded-2xl border border-[#E6E6E6] shadow-sm space-y-3">
+              <div className="flex items-center justify-between text-xs border-b border-[#E6E6E6] pb-2">
+                <span className="font-bold text-[#031534] uppercase tracking-wider">Pratinjau Kop Surat Resmi (PDF &amp; Laporan Ekspor)</span>
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-200">✓ Format Sesuai Sampel</span>
+              </div>
+              <div className="bg-white p-6 rounded-xl border border-slate-300 shadow-xs text-center space-y-1 my-2 max-w-3xl mx-auto">
+                <div className="flex items-center justify-center gap-6">
+                  <img src={school.logoUrl} alt="Logo SMPN 99" className="w-16 h-16 object-contain" />
+                  <div className="text-center space-y-0.5">
+                    <h2 className="text-xl sm:text-2xl font-black text-[#031534] tracking-tight uppercase">
+                      {school.name}
+                    </h2>
+                    <p className="text-xs text-[#44474E] font-medium">
+                      {school.address}
+                    </p>
+                    <p className="text-xs text-[#44474E] font-medium">
+                      Telp. {school.phone || '021.4891456'} Fax. {school.fax || '47881356'}
+                    </p>
+                    <p className="text-xs text-[#44474E] font-medium">
+                      Email: <span className="text-blue-600 underline">{school.email || 'smpn99dki@yahoo.co.id'}</span> | Website: <span className="text-blue-600 underline">{school.website || 'https://smpn99jkt.sch.id'}</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="border-b-2 border-[#031534] pt-2"></div>
+                <div className="border-b border-[#031534] mt-[2px]"></div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               {/* Left Form: School Metadata */}
