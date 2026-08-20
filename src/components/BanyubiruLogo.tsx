@@ -9,6 +9,7 @@ interface BanyubiruLogoProps {
 
 export const BanyubiruLogo: React.FC<BanyubiruLogoProps> = ({ 
   banyubiruLogoUrl, 
+  logoUrl,
   size = 'md',
   className = '' 
 }) => {

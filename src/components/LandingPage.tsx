@@ -231,7 +231,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 {/* Floating Metric Pill */}
                 <div className="flex items-center justify-between text-xs pt-1 text-[#6C757D]">
                   <span>Akurasi Pencocokan NISN: <strong className="text-[#031534]">99.4%</strong></span>
-                  <span className="text-emerald-700 font-bold">865 Siswa Dapodik</span>
+                  <span className="text-emerald-700 font-bold">{masterStudents.length} Siswa Dapodik</span>
                 </div>
 
               </div>
@@ -257,7 +257,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             <div className="space-y-1">
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#00B894] font-display">865+</div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#00B894] font-display">{masterStudents.length}+</div>
               <div className="text-xs text-slate-300 font-medium uppercase tracking-wider">Siswa Terintegrasi Dapodik</div>
             </div>
 
