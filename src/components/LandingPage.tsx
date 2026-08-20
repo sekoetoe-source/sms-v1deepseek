@@ -297,7 +297,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <WorkflowSection />
 
       {/* 5. HUMAN-IN-THE-LOOP SECTION */}
-      <HumanInTheLoopSection />
+      <HumanInTheLoopSection onOpenWorkspace={onOpenWorkspace} />
 
       {/* 6. BENTO FEATURES GRID */}
       <BentoFeaturesSection />
