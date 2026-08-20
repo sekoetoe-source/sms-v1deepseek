@@ -159,7 +159,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 {/* Visual Header */}
                 <div className="flex items-center justify-between border-b border-[#E6E6E6] pb-3">
                   <div className="flex items-center gap-2.5">
-                    <BanyubiruLogo banyubiruLogoUrl={school.banyubiruLogoUrl} size="sm" />
+                    <BanyubiruLogo logoUrl={school.logoUrl} banyubiruLogoUrl={school.banyubiruLogoUrl} size="sm" />
                     <div>
                       <span className="font-bold text-xs text-[#031534] block">SMS Banyubiru Engine</span>
                       <span className="text-[10px] text-[#6C757D]">OCR AI + Dapodik Matcher</span>
@@ -617,7 +617,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <BanyubiruLogo banyubiruLogoUrl={school.banyubiruLogoUrl} size="md" />
+              <BanyubiruLogo logoUrl={school.logoUrl} banyubiruLogoUrl={school.banyubiruLogoUrl} size="md" />
               <div>
                 <span className="font-bold text-lg text-white block">SMS Banyubiru</span>
                 <span className="text-[10px] text-slate-400">Banyubiru Digital Services</span>

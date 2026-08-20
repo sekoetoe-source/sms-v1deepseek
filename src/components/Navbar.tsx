@@ -36,6 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-3 group text-left focus:outline-none"
           >
             <BanyubiruLogo 
+              logoUrl={school.logoUrl}
               banyubiruLogoUrl={school.banyubiruLogoUrl} 
               size="md"
               className="group-hover:scale-105 transition-transform"
