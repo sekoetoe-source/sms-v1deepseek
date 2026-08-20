@@ -39,18 +39,19 @@ export const App: React.FC = () => {
   // Import Master Data Handler
   const handleImportComplete = (newStudents: Student[]) => {
     setMasterStudents(prev => {
-      // Merge unique by NISN
+      // Merge unique by NISN or prepend new records
       const existingNisns = new Set(prev.map(s => s.nisn));
       const filteredNew = newStudents.filter(s => !existingNisns.has(s.nisn));
-      return [...filteredNew, ...prev];
+      const result = [...filteredNew, ...prev];
+      return result;
     });
 
     const newLog: AuditLog = {
       id: `LOG-${Date.now()}`,
       timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
       operator: school.operatorName,
-      action: 'Import Master Data Dapodik',
-      afterValue: `Menambahkan ${newStudents.length} siswa ke database sekolah`,
+      action: 'Import Master Data Dapodik (Web Service API)',
+      afterValue: `Menambahkan ${newStudents.length} siswa + GTK baru ke database sekolah`,
       type: 'import'
     };
     setAuditLogs(prev => [newLog, ...prev]);

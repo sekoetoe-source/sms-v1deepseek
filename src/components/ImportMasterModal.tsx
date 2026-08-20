@@ -91,25 +91,38 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
-      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      confetti({ particleCount: 100, spread: 90, origin: { y: 0.6 } });
       
-      // Seed extended student batch
-      const extendedStudents: Student[] = [
-        ...sampleSiswaRows.map((r, i) => ({
-          student_id: `STU-IMP-${100 + i}`,
-          source_id: `DAPO-99-${100 + i}`,
-          nis: r.nis,
-          nisn: r.nisn,
-          nama: r.nama,
-          kelas: r.kelas,
-          rombel: r.rombel,
+      // Generate 841 new Dapodik students so master total changes from 24 to 865
+      const namesList = [
+        "Aditya Pratama", "Anisa Nur Aini", "Bayu Saputra", "Cantika Dewi Maharani", "Danang Wijaya",
+        "Elvira Novita", "Farhan Maulana", "Grace Natalia", "Haikal Fadhilah", "Intan Permatasari",
+        "Joko Susilo", "Kiki Amalia", "Lukman Hakim", "Maya Sandrina", "Naufal Ahmad",
+        "Oktavia Rahma", "Pandu Wijaya", "Qonita Zahra", "Raihan Ramadan", "Siti Aminah",
+        "Taufik Hidayat", "Umar Al-Faruq", "Vina Panduwinata", "Wawan Setiawan", "Yusuf Mansur"
+      ];
+      const classes = ['VII-A', 'VII-B', 'VII-C', 'VIII-A', 'VIII-B', 'VIII-C', 'IX-A', 'IX-B', 'IX-C'];
+      
+      const newDapodikBatch: Student[] = Array.from({ length: 841 }, (_, i) => {
+        const nameIdx = i % namesList.length;
+        const clsIdx = i % classes.length;
+        const numStr = String(i + 100).padStart(4, '0');
+        return {
+          student_id: `STU-DAPO-${i + 100}`,
+          source_id: `DAPO-99-${numStr}`,
+          nis: `242507${numStr}`,
+          nisn: `01084${numStr}`,
+          nama: `${namesList[nameIdx]} (${i + 1})`,
+          kelas: classes[clsIdx],
+          rombel: `Kelas ${classes[clsIdx]}`,
           status: 'Aktif' as const,
           academic_year: '2025/2026',
-          gender: (i % 2 === 0 ? 'L' : 'P') as 'L' | 'P'
-        }))
-      ];
+          gender: (i % 2 === 0 ? 'L' : 'P') as 'L' | 'P',
+          wali_kelas: 'Dra. Hj. Nurhayati, M.Pd.'
+        };
+      });
 
-      onImportComplete(extendedStudents);
+      onImportComplete(newDapodikBatch);
       onClose();
     }, 1200);
   };
