@@ -32,18 +32,21 @@ export const ProblemSection: React.FC = () => {
   return (
     <section
       id="problem-statement-section"
-      className="px-4 sm:px-6 md:px-8 max-w-5xl mx-auto mb-24 sm:mb-28"
+      className="px-4 sm:px-6 max-w-5xl mx-auto mb-12 sm:mb-16"
     >
-      <div className="text-center mb-10">
+      <div className="text-center mb-6">
+        <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#006b55]">
+          TANTANGAN FISIK
+        </span>
         <h2
           id="problem-headline"
-          className="font-['Plus_Jakarta_Sans',sans-serif] text-2xl sm:text-3xl md:text-4xl font-bold text-[#0b1c30] mb-3"
+          className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl md:text-3xl font-extrabold text-[#0b1c30] mt-1 mb-2"
         >
           Input Manual Memperlambat Kinerja
         </h2>
         <p
           id="problem-subheadline"
-          className="text-sm sm:text-base text-[#45464d] max-w-2xl mx-auto leading-relaxed"
+          className="text-xs sm:text-sm text-[#45464d] max-w-xl mx-auto leading-relaxed"
         >
           Tinggalkan proses mengetik ulang data siswa dari kertas. Biarkan sistem yang membaca, Anda yang memvalidasi.
         </p>

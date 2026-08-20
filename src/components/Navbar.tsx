@@ -31,45 +31,44 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* Brand Left */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           <button 
             onClick={() => onNavigate('landing')}
-            className="flex items-center gap-3.5 group text-left focus:outline-none"
+            className="flex items-center gap-2.5 group text-left focus:outline-none shrink-0"
           >
             <BanyubiruLogo 
               banyubiruLogoUrl={school.banyubiruLogoUrl} 
-              size="md"
+              size="sm"
               className="group-hover:scale-105 transition-transform"
             />
-            <div className="flex flex-col justify-center leading-snug">
-              <span className="font-black text-[#031534] text-base sm:text-lg tracking-tight font-display uppercase leading-tight">
-                SMP NEGERI 99
+            <div className="flex flex-col justify-center leading-tight">
+              <span className="font-extrabold text-[#031534] text-sm sm:text-base tracking-tight font-display uppercase whitespace-nowrap">
+                SMP NEGERI 99 JAKARTA
               </span>
-              <span className="font-black text-[#031534] text-base sm:text-lg tracking-tight font-display uppercase leading-tight">
-                JAKARTA
+              <span className="text-[10px] font-bold text-[#006b55]">
+                SMS Banyubiru Digital
               </span>
             </div>
           </button>
 
           {/* Active School Badge */}
-          <div className="hidden lg:flex items-center gap-2 pl-4 border-l border-[#E6E6E6] text-xs text-[#44474E]">
+          <div className="hidden xl:flex items-center gap-2 pl-3 border-l border-[#E6E6E6] text-xs text-[#44474E]">
             <SchoolLogo logoUrl={school.logoUrl} size="sm" />
-            <span className="font-bold text-[#031534]">{school.name}</span>
-            <span className="text-[#6C757D] font-mono">(NPSN: {school.npsn})</span>
+            <span className="font-bold text-[#031534] text-xs">{school.name}</span>
+            <span className="text-[#6C757D] font-mono text-[11px]">(NPSN: {school.npsn})</span>
           </div>
         </div>
 
         {/* Navigation Links for Landing */}
         {currentView === 'landing' ? (
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[#44474E]">
+          <nav className="hidden lg:flex items-center gap-5 text-xs font-semibold text-[#44474E]">
             <a href="#fitur" className="hover:text-[#006b55] transition-colors">Fitur</a>
-            <a href="#cara-kerja" className="hover:text-[#006b55] transition-colors">Cara Kerja</a>
-            <a href="#simulator" className="hover:text-[#006b55] transition-colors flex items-center gap-1">
+            <a href="#workflow-section" className="hover:text-[#006b55] transition-colors">Cara Kerja</a>
+            <a href="#human-in-the-loop-section" className="hover:text-[#006b55] transition-colors flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-[#00B894]" />
               Demo Interaktif
             </a>
-            <a href="#perbandingan" className="hover:text-[#006b55] transition-colors">Keunggulan</a>
-            <a href="#harga" className="hover:text-[#006b55] transition-colors">Harga</a>
+            <a href="#features-bento-section" className="hover:text-[#006b55] transition-colors">Keunggulan</a>
             <a href="#faq" className="hover:text-[#006b55] transition-colors">FAQ</a>
           </nav>
         ) : (
@@ -82,22 +81,22 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
 
         {/* Actions Right */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {currentView === 'landing' ? (
             <>
               <button 
                 onClick={onOpenDemo}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-[#031534] hover:bg-[#EDEEEF] transition-colors"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#031534] hover:bg-[#EDEEEF] transition-colors"
               >
-                <FileText className="w-4 h-4 text-[#006b55]" />
+                <FileText className="w-3.5 h-3.5 text-[#006b55]" />
                 Demo Video
               </button>
               <button 
                 onClick={() => onNavigate('workspace', 'dashboard')}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#031534] text-white hover:bg-[#1a2a4a] transition-all shadow-sm hover:shadow active:scale-95"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-extrabold bg-[#031534] text-white hover:bg-[#1a2a4a] transition-all shadow-xs hover:shadow active:scale-95 whitespace-nowrap"
               >
                 Masuk ke Workspace
-                <ArrowRight className="w-4 h-4 text-[#00B894]" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#00B894]" />
               </button>
             </>
           ) : (

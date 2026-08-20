@@ -66,14 +66,19 @@ export const BentoFeaturesSection: React.FC = () => {
   return (
     <section
       id="features-bento-section"
-      className="px-4 sm:px-6 md:px-8 max-w-5xl mx-auto mb-24 sm:mb-28"
+      className="px-4 sm:px-6 max-w-5xl mx-auto mb-12 sm:mb-16"
     >
-      <h2
-        id="bento-headline"
-        className="font-['Plus_Jakarta_Sans',sans-serif] text-2xl sm:text-3xl md:text-4xl font-bold text-[#0b1c30] text-center mb-10"
-      >
-        Platform Solid untuk Administrasi Sekolah
-      </h2>
+      <div className="text-center mb-8">
+        <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#006b55]">
+          INFRASTRUKTUR DATA HANDAL
+        </span>
+        <h2
+          id="bento-headline"
+          className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl md:text-3xl font-extrabold text-[#0b1c30] mt-1"
+        >
+          Platform Solid untuk Administrasi Sekolah
+        </h2>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Large Card (Col Span 2) - Manajemen Master Data Terpusat */}

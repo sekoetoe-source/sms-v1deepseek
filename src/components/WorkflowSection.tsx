@@ -58,60 +58,45 @@ export const WorkflowSection: React.FC = () => {
   return (
     <section
       id="workflow-section"
-      className="px-4 sm:px-6 md:px-8 max-w-4xl mx-auto mb-24 sm:mb-28"
+      className="px-4 sm:px-6 max-w-5xl mx-auto mb-12 sm:mb-16"
     >
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
+        <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#006b55]">
+          PROSES OTOMASI DAPODIK
+        </span>
         <h2
           id="workflow-headline"
-          className="font-['Plus_Jakarta_Sans',sans-serif] text-2xl sm:text-3xl md:text-4xl font-bold text-[#0b1c30] mb-3"
+          className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl md:text-3xl font-extrabold text-[#0b1c30] mt-1 mb-1.5"
         >
           Alur Kerja Cerdas SMS
         </h2>
         <p
           id="workflow-subheadline"
-          className="text-sm sm:text-base text-[#45464d] max-w-lg mx-auto"
+          className="text-xs sm:text-sm text-[#45464d] max-w-md mx-auto"
         >
-          Pendekatan &quot;Human-in-the-Loop&quot; memastikan akurasi 100%.
+          Pendekatan &quot;Human-in-the-Loop&quot; memastikan akurasi data 100%.
         </p>
       </div>
 
-      <div className="relative border-l-2 border-blue-200 ml-4 md:ml-0 md:left-1/2 md:-translate-x-[1px] space-y-8 md:space-y-12">
+      {/* Compact 5-Step Process Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
         {steps.map((step, idx) => {
-          const isLeft = step.align === 'left';
           const Icon = step.icon;
 
           return (
             <div
               key={idx}
               id={`workflow-step-${idx + 1}`}
-              className={`relative pl-8 md:pl-0 w-full md:w-1/2 ${
-                isLeft
-                  ? 'md:pr-10 md:text-right md:mr-auto'
-                  : 'md:ml-auto md:pl-10 md:text-left'
+              className={`p-4 rounded-xl border transition-all flex flex-col justify-between relative ${
+                step.isCrucial
+                  ? 'bg-amber-50/90 border-amber-300 shadow-xs ring-1 ring-amber-400/50'
+                  : 'bg-white border-[#e2e8f0] shadow-2xs hover:shadow-xs hover:border-blue-300'
               }`}
             >
-              {/* Timeline Dot */}
-              <div
-                className={`absolute left-[-9px] ${
-                  isLeft ? 'md:left-auto md:right-[-9px]' : 'md:left-[-9px]'
-                } top-2 w-4 h-4 rounded-full ${step.dotColor} ring-4 ring-white shadow-xs z-10`}
-              ></div>
-
-              {/* Step Card */}
-              <div
-                className={`p-5 rounded-xl border transition-all ${
-                  step.isCrucial
-                    ? 'bg-amber-50/90 border-amber-300 shadow-sm'
-                    : 'bg-white border-[#e2e8f0] shadow-xs hover:shadow-md hover:border-blue-200'
-                }`}
-              >
-                <div
-                  className={`flex items-center gap-2 mb-2 ${
-                    isLeft ? 'md:justify-end' : 'md:justify-start'
-                  }`}
-                >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2.5">
                   <span
-                    className={`inline-block px-2.5 py-1 text-xs font-semibold rounded ${
+                    className={`inline-block px-2 py-0.5 text-[10px] font-bold rounded ${
                       step.isCrucial
                         ? 'bg-amber-200/80 text-amber-900 border border-amber-300'
                         : 'bg-blue-50 text-blue-700 border border-blue-100'
@@ -119,15 +104,15 @@ export const WorkflowSection: React.FC = () => {
                   >
                     {step.stepNumber}
                   </span>
-                  <Icon
-                    className={`w-4 h-4 ${
-                      step.isCrucial ? 'text-amber-700' : 'text-blue-600'
-                    }`}
-                  />
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                    step.isCrucial ? 'bg-amber-200/60 text-amber-800' : 'bg-blue-50 text-blue-600'
+                  }`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
                 </div>
 
                 <h4
-                  className={`font-['Plus_Jakarta_Sans',sans-serif] text-lg font-bold mb-1.5 ${
+                  className={`font-['Plus_Jakarta_Sans',sans-serif] text-sm font-bold mb-1 ${
                     step.isCrucial ? 'text-amber-950' : 'text-[#0b1c30]'
                   }`}
                 >
@@ -135,13 +120,19 @@ export const WorkflowSection: React.FC = () => {
                 </h4>
 
                 <p
-                  className={`text-sm leading-relaxed ${
+                  className={`text-[11px] leading-relaxed ${
                     step.isCrucial ? 'text-amber-900/90' : 'text-[#45464d]'
                   }`}
                 >
                   {step.description}
                 </p>
               </div>
+
+              {idx < steps.length - 1 && (
+                <div className="hidden lg:block absolute -right-2 top-1/2 -translate-y-1/2 z-10 text-slate-300 pointer-events-none">
+                  →
+                </div>
+              )}
             </div>
           );
         })}

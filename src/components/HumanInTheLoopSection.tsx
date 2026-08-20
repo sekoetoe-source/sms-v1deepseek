@@ -48,20 +48,23 @@ export const HumanInTheLoopSection: React.FC = () => {
   return (
     <section
       id="human-in-the-loop-section"
-      className="px-4 sm:px-6 md:px-8 max-w-5xl mx-auto mb-24 sm:mb-28"
+      className="px-4 sm:px-6 max-w-5xl mx-auto mb-12 sm:mb-16"
     >
-      <div className="bg-[#eff4ff] rounded-2xl p-6 sm:p-8 md:p-10 border border-[#c6c6cd] shadow-sm overflow-hidden">
+      <div className="bg-[#eff4ff] rounded-2xl p-5 sm:p-7 border border-[#c6c6cd] shadow-xs overflow-hidden">
         {/* Section Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#006b55]">
+            PENINJAUAN GANDA OPERATOR
+          </span>
           <h2
             id="hitl-headline"
-            className="font-['Plus_Jakarta_Sans',sans-serif] text-2xl sm:text-3xl md:text-4xl font-bold text-[#0b1c30] mb-2"
+            className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl md:text-3xl font-extrabold text-[#0b1c30] mt-1 mb-1.5"
           >
             Human-in-the-Loop
           </h2>
           <p
             id="hitl-subheadline"
-            className="text-sm sm:text-base text-[#45464d] max-w-xl mx-auto"
+            className="text-xs sm:text-sm text-[#45464d] max-w-lg mx-auto"
           >
             AI membaca cepat, manusia memastikan akurat. Tampilan berdampingan untuk verifikasi mudah.
           </p>
