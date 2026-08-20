@@ -166,3 +166,57 @@ export interface StudentMasterRecord {
   statusDapodik: 'Sinkron' | 'Perlu Verifikasi' | 'Belum Terdaftar';
   dokumenLengkap: boolean;
 }
+
+export type AiProviderType = 
+  | 'deepseek' 
+  | 'gemini' 
+  | 'openai' 
+  | 'claude' 
+  | 'ollama' 
+  | 'qwen' 
+  | 'custom';
+
+export type RouterTier = 'tier1' | 'tier2' | 'tier3';
+
+export interface AiModelProvider {
+  id: string;
+  name: string;
+  provider: AiProviderType;
+  modelCode: string;
+  tier: RouterTier;
+  contextWindow: string;
+  avgLatencyMs: number;
+  costPer1kTokens: number; // in IDR or USD
+  status: 'active' | 'standby' | 'rate_limited' | 'disabled';
+  isLocal: boolean;
+  capabilities: string[];
+}
+
+export interface AiRouterSettings {
+  tier1ModelId: string;
+  tier2ModelId: string;
+  tier3ModelId: string;
+  autoFallbackEnabled: boolean;
+  timeoutMs: number;
+  maxRetry: number;
+  rtkTokenSaver: boolean; // Rust Token Killer (-40% tokens)
+  cavemanMode: boolean; // Stripped compact output
+  localProxyEndpoint: string;
+  dapodikPort: string;
+  activeTier: RouterTier;
+}
+
+export interface AiRouteLog {
+  id: string;
+  timestamp: string;
+  taskType: 'OCR Ekstraksi' | 'Fuzzy Match Dapodik' | 'Analisis Dokumen' | 'Smart Chat';
+  selectedTier: RouterTier;
+  modelUsed: string;
+  fallbackTriggered: boolean;
+  fallbackReason?: string;
+  tokensRaw: number;
+  tokensCompressed: number;
+  tokensSavedPct: number;
+  latencyMs: number;
+  status: 'success' | 'failed' | 'fallback_success';
+}

@@ -30,7 +30,8 @@ import {
   AlertCircle,
   ZoomIn,
   ZoomOut,
-  Maximize2
+  Maximize2,
+  Cpu
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
@@ -48,6 +49,7 @@ import { matchStudentAgainstMaster } from '../utils/fuzzyMatch';
 import { PRESET_SAMPLE_DOCS } from '../data/mockData';
 import { ManualMatchModal } from './ManualMatchModal';
 import { PdfPreviewModal } from './PdfPreviewModal';
+import { AiRouterWorkspace } from './AiRouterWorkspace';
 
 interface WorkspaceProps {
   initialTab?: string;
@@ -608,6 +610,21 @@ export const Workspace: React.FC<WorkspaceProps> = ({
               <span>AI Studio Assistant</span>
               <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">
                 Live Chat
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('ai_router')}
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+                activeTab === 'ai_router'
+                  ? 'bg-[#031534] text-white shadow-xs border border-[#00E5FF]/50 shadow-[0_0_12px_rgba(0,229,255,0.2)]'
+                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
+              }`}
+            >
+              <Cpu className="w-4 h-4 text-[#00E5FF]" />
+              <span>AI Model Router</span>
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-blue-100 text-blue-800 font-bold">
+                9Router 3-Tier
               </span>
             </button>
 
