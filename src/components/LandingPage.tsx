@@ -129,38 +129,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </button>
               </div>
 
-              {/* Institutional Trust Logos */}
-              <div className="pt-6 border-t border-[#E6E6E6]/80 flex flex-wrap items-center gap-8">
-                <div className="text-[11px] font-bold text-[#6C757D] uppercase tracking-wider">
-                  Partner Resmi:
-                </div>
-                <div className="flex items-center gap-6 opacity-85 hover:opacity-100 transition-opacity">
-                  <div className="flex items-center gap-2">
-                    <img 
-                      src={school.banyubiruLogoUrl} 
-                      alt="Banyubiru Digital Services" 
-                      className="h-8 object-contain"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <img 
-                      src={school.logoUrl} 
-                      alt="SMP Negeri 99 Jakarta" 
-                      className="h-9 object-contain"
-                    />
-                    <span className="text-xs font-bold text-[#031534]">SMPN 99 Jakarta</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <img 
-                      src={school.dkiLogoUrl} 
-                      alt="Dinas Pendidikan DKI Jakarta" 
-                      className="h-8 object-contain"
-                    />
-                    <span className="text-xs font-semibold text-[#6C757D]">Dinas Pendidikan DKI</span>
-                  </div>
-                </div>
-              </div>
-
             </div>
 
             {/* Hero Right Visual Glass Panel */}
