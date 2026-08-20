@@ -1,0 +1,6 @@
+{
+  "name": "SMS Banyubiru - Sistem Manajemen Sekolah",
+  "description": "Sistem Manajemen Sekolah untuk otomatisasi ekstraksi dokumen administrasi, pencocokan master data siswa (Dapodik), verifikasi human-in-the-loop, dan ekspor laporan Excel/PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
