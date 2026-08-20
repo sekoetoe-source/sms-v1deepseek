@@ -1100,6 +1100,13 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         )}
 
         {/* ========================================================= */}
+        {/* TAB: AI MODEL ROUTER (9ROUTER 3-TIER MULTI-MODEL ENGINE)  */}
+        {/* ========================================================= */}
+        {activeTab === 'ai_router' && (
+          <AiRouterWorkspace />
+        )}
+
+        {/* ========================================================= */}
         {/* TAB 2: PUSAT DOKUMEN & OCR                                */}
         {/* ========================================================= */}
         {activeTab === 'documents' && (
