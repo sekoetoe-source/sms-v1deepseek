@@ -83,6 +83,59 @@ export const BanyubiruLogoSvg: React.FC<{ className?: string; showText?: boolean
   </svg>
 );
 
+export const BanyubiruBrandLogo: React.FC<{ 
+  size?: 'sm' | 'md' | 'lg'; 
+  className?: string;
+  onClick?: () => void;
+}> = ({
+  size = 'md',
+  className = '',
+  onClick
+}) => {
+  const textSizes = {
+    sm: 'text-sm sm:text-base',
+    md: 'text-base sm:text-lg md:text-xl',
+    lg: 'text-xl sm:text-2xl md:text-3xl'
+  }[size];
+
+  const tagSizes = {
+    sm: 'text-[8px] sm:text-[9px] tracking-[0.2em]',
+    md: 'text-[9px] sm:text-[10px] tracking-[0.25em]',
+    lg: 'text-[11px] sm:text-[12px] tracking-[0.3em]'
+  }[size];
+
+  return (
+    <div 
+      onClick={onClick}
+      className={`inline-flex flex-col items-center justify-center font-sans select-none cursor-pointer group ${className}`}
+    >
+      {/* Top Text: BANYUBIRU with custom 'A' cyan triangle */}
+      <div className={`flex items-center text-white font-black tracking-[0.16em] leading-none font-display ${textSizes}`}>
+        <span>B</span>
+        {/* Custom Letter A with Cyan Triangle */}
+        <span className="relative inline-flex items-center justify-center mx-[0.01em]">
+          <svg className="w-[1.02em] h-[1.02em]" viewBox="0 0 100 100" fill="none">
+            {/* Outer White 'A' frame */}
+            <path d="M 50 8 L 10 92 H 32 L 50 50 L 68 92 H 90 L 50 8 Z" fill="#FFFFFF" />
+            {/* Inner Cyan Triangle */}
+            <polygon points="50,54 28,92 72,92" fill="#00E5FF" />
+          </svg>
+        </span>
+        <span>NYUBIRU</span>
+      </div>
+
+      {/* Bottom Tagline: — DIGITAL SERVICES — */}
+      <div className="flex items-center justify-between w-full mt-1 gap-1">
+        <div className="h-[1.5px] bg-gradient-to-r from-transparent via-[#00E5FF] to-[#00E5FF] flex-1"></div>
+        <span className={`font-extrabold text-[#00E5FF] uppercase whitespace-nowrap px-1 ${tagSizes}`}>
+          DIGITAL SERVICES
+        </span>
+        <div className="h-[1.5px] bg-gradient-to-l from-transparent via-[#00E5FF] to-[#00E5FF] flex-1"></div>
+      </div>
+    </div>
+  );
+};
+
 export const BanyubiruLogo: React.FC<BanyubiruLogoProps> = ({ 
   banyubiruLogoUrl, 
   size = 'md',
