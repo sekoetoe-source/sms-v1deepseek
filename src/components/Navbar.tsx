@@ -31,7 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* Brand Left */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3.5">
           <button 
             onClick={() => onNavigate('landing')}
             className="flex items-center gap-2.5 group text-left focus:outline-none shrink-0"
@@ -41,21 +41,27 @@ export const Navbar: React.FC<NavbarProps> = ({
               size="sm"
               className="group-hover:scale-105 transition-transform"
             />
-            <div className="flex flex-col justify-center leading-tight">
-              <span className="font-extrabold text-[#031534] text-sm sm:text-base tracking-tight font-display uppercase whitespace-nowrap">
-                SMP NEGERI 99 JAKARTA
+            <div className="flex flex-col justify-center leading-none">
+              <span className="font-extrabold text-[#031534] text-xs sm:text-sm tracking-tight font-display uppercase whitespace-nowrap">
+                SMS BANYUBIRU
               </span>
-              <span className="text-[10px] font-bold text-[#006b55]">
-                SMS Banyubiru Digital
+              <span className="text-[10px] font-bold text-[#006b55] pt-0.5">
+                Digital Services
               </span>
             </div>
           </button>
 
           {/* Active School Badge */}
-          <div className="hidden xl:flex items-center gap-2 pl-3 border-l border-[#E6E6E6] text-xs text-[#44474E]">
+          <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-[#E6E6E6] text-xs">
             <SchoolLogo logoUrl={school.logoUrl} size="sm" />
-            <span className="font-bold text-[#031534] text-xs">{school.name}</span>
-            <span className="text-[#6C757D] font-mono text-[11px]">(NPSN: {school.npsn})</span>
+            <div className="flex flex-col justify-center leading-none">
+              <span className="font-extrabold text-[#031534] text-xs sm:text-sm tracking-tight whitespace-nowrap">
+                {school.name}
+              </span>
+              <span className="text-[#6C757D] font-mono text-[10px] pt-0.5">
+                NPSN: {school.npsn}
+              </span>
+            </div>
           </div>
         </div>
 
