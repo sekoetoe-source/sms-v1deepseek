@@ -28,9 +28,16 @@ import {
   HelpCircle,
   FileCheck
 } from 'lucide-react';
-import { SchoolProfile, Student } from '../types';
+import { SchoolProfile, Student, VerificationQueueItem } from '../types';
 import { PRESET_SAMPLE_DOCS } from '../data/mockData';
 import { BanyubiruLogo } from './BanyubiruLogo';
+import { DashboardPreview } from './DashboardPreview';
+import { ProblemSection } from './ProblemSection';
+import { WorkflowSection } from './WorkflowSection';
+import { HumanInTheLoopSection } from './HumanInTheLoopSection';
+import { BentoFeaturesSection } from './BentoFeaturesSection';
+import { CtaSection } from './CtaSection';
+import { LiveSimulatorModal } from './LiveSimulatorModal';
 
 interface LandingPageProps {
   onOpenWorkspace: (tab?: string) => void;
@@ -49,6 +56,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const [activeSimulatorDoc, setActiveSimulatorDoc] = useState<number>(0);
   const [simStep, setSimStep] = useState<'idle' | 'scanning' | 'matched' | 'verified'>('matched');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [isSimulatorModalOpen, setIsSimulatorModalOpen] = useState(false);
+  const [selectedQueueItem, setSelectedQueueItem] = useState<VerificationQueueItem | null>(null);
+
+  const handleOpenDemoModal = (item?: VerificationQueueItem) => {
+    setSelectedQueueItem(item || null);
+    setIsSimulatorModalOpen(true);
+    onOpenDemo();
+  };
 
   const sampleDoc = PRESET_SAMPLE_DOCS[activeSimulatorDoc];
 
@@ -270,7 +285,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 3. FEATURE GRID SECTION */}
+      {/* 2. DASHBOARD PREVIEW MOCKUP */}
+      <div className="py-12 bg-[#F8F9FA]">
+        <DashboardPreview onOpenVerification={handleOpenDemoModal} />
+      </div>
+
+      {/* 3. PROBLEM STATEMENT SECTION */}
+      <ProblemSection />
+
+      {/* 4. WORKFLOW SECTION */}
+      <WorkflowSection />
+
+      {/* 5. HUMAN-IN-THE-LOOP SECTION */}
+      <HumanInTheLoopSection />
+
+      {/* 6. BENTO FEATURES GRID */}
+      <BentoFeaturesSection />
+
+      {/* 7. FEATURE GRID SECTION */}
       <section id="fitur" className="py-20 bg-[#F8F9FA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
@@ -580,38 +612,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 7. CALL TO ACTION BANNER */}
-      <section className="py-16 bg-[#031534] text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none architectural-grid"></div>
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10 space-y-6">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#00E5FF]">
-            SIAP MEMULAI TRANSFORMASI DIGITAL?
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-display leading-snug">
-            Otomatiskan Administrasi Berkas Sekolah Anda Hari Ini
-          </h2>
-          <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
-            Hubungkan berkas fisik dengan Web Service Dapodik secara instan tanpa mengetik ulang.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <button
-              onClick={() => onOpenWorkspace('dashboard')}
-              className="bg-[#FFD000] hover:bg-[#e6bb00] text-[#031534] font-extrabold text-sm px-8 py-4 rounded-xl shadow-lg transition-all flex items-center gap-2"
-            >
-              <span>Masuk ke Workspace Operasional</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              onClick={onOpenDemo}
-              className="bg-transparent hover:bg-white/10 text-white border border-white/30 font-semibold text-sm px-6 py-4 rounded-xl transition-all"
-            >
-              Lihat Demo Interaktif
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* 8. CALL TO ACTION SECTION */}
+      <CtaSection onOpenDemo={() => handleOpenDemoModal()} />
 
-      {/* 8. FOOTER */}
+      {/* 9. FOOTER */}
       <footer className="bg-[#020b1a] text-white px-6 sm:px-12 py-16 border-t border-slate-800">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           
@@ -654,6 +658,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         </div>
       </footer>
+
+      {/* 10. INTERACTIVE OCR & DAPODIK VERIFICATION SIMULATOR MODAL */}
+      <LiveSimulatorModal
+        isOpen={isSimulatorModalOpen}
+        onClose={() => setIsSimulatorModalOpen(false)}
+        initialItem={selectedQueueItem}
+      />
 
     </div>
   );

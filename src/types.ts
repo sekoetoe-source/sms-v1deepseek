@@ -135,3 +135,34 @@ export interface SchoolProfile {
   dkiLogoUrl: string;
   banyubiruLogoUrl: string;
 }
+
+export interface VerificationQueueItem {
+  id: string;
+  fileName: string;
+  docType: 'KK' | 'Ijazah' | 'Akta' | 'Rapor';
+  uploadedAt: string;
+  status: 'pending' | 'verified' | 'flagged';
+  verifiedBy?: string;
+  confidence: number;
+  extractedData: {
+    namaLengkap: string;
+    nik: string;
+    nisn?: string;
+    tempatLahir?: string;
+    tanggalLahir?: string;
+    namaIbu?: string;
+    namaAyah?: string;
+    alamat?: string;
+  };
+}
+
+export interface StudentMasterRecord {
+  id: string;
+  nisn: string;
+  nik: string;
+  nama: string;
+  kelas: string;
+  jenisKelamin: 'L' | 'P';
+  statusDapodik: 'Sinkron' | 'Perlu Verifikasi' | 'Belum Terdaftar';
+  dokumenLengkap: boolean;
+}
