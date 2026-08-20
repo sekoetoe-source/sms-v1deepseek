@@ -43,6 +43,7 @@ import {
   ProcessingStatus
 } from '../types';
 import { exportToExcel, exportToPDF, exportMasterStudentsToExcel } from '../utils/exportUtils';
+import { SchoolLogo } from './SchoolLogo';
 import { matchStudentAgainstMaster } from '../utils/fuzzyMatch';
 import { PRESET_SAMPLE_DOCS } from '../data/mockData';
 import { ManualMatchModal } from './ManualMatchModal';
@@ -1875,7 +1876,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
               </div>
               <div className="bg-white p-6 rounded-xl border border-slate-300 shadow-xs text-center space-y-1 my-2 max-w-3xl mx-auto">
                 <div className="flex items-center justify-center gap-6">
-                  <img src={school.logoUrl} alt="Logo SMPN 99" className="w-16 h-16 object-contain" />
+                  <SchoolLogo logoUrl={school.logoUrl} size="lg" />
                   <div className="text-center space-y-0.5">
                     <h2 className="text-xl sm:text-2xl font-black text-[#031534] tracking-tight uppercase">
                       {school.name}

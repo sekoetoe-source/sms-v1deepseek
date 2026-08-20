@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { SchoolProfile } from '../types';
 import { BanyubiruLogo } from './BanyubiruLogo';
+import { SchoolLogo } from './SchoolLogo';
 
 interface NavbarProps {
   currentView: 'landing' | 'workspace';
@@ -33,39 +34,28 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-6">
           <button 
             onClick={() => onNavigate('landing')}
-            className="flex items-center gap-3 group text-left focus:outline-none"
+            className="flex items-center gap-3.5 group text-left focus:outline-none"
           >
             <BanyubiruLogo 
-              logoUrl={school.logoUrl}
               banyubiruLogoUrl={school.banyubiruLogoUrl} 
               size="md"
               className="group-hover:scale-105 transition-transform"
             />
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-[#031534] text-lg tracking-tight font-display">
-                  SMS Banyubiru
-                </span>
-                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#00B894]/10 text-[#006b55] border border-[#00B894]/20">
-                  v1.0 MVP
-                </span>
-              </div>
-              <p className="text-[11px] text-[#6C757D] font-medium leading-none">
-                Sistem Manajemen Sekolah
-              </p>
+            <div className="flex flex-col justify-center leading-snug">
+              <span className="font-black text-[#031534] text-base sm:text-lg tracking-tight font-display uppercase leading-tight">
+                SMP NEGERI 99
+              </span>
+              <span className="font-black text-[#031534] text-base sm:text-lg tracking-tight font-display uppercase leading-tight">
+                JAKARTA
+              </span>
             </div>
           </button>
 
           {/* Active School Badge */}
           <div className="hidden lg:flex items-center gap-2 pl-4 border-l border-[#E6E6E6] text-xs text-[#44474E]">
-            <img 
-              src={school.logoUrl} 
-              alt={school.name} 
-              className="w-5 h-5 object-contain"
-              onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
-            />
-            <span className="font-semibold text-[#031534]">{school.name}</span>
-            <span className="text-[#6C757D]">(NPSN: {school.npsn})</span>
+            <SchoolLogo logoUrl={school.logoUrl} size="sm" />
+            <span className="font-bold text-[#031534]">{school.name}</span>
+            <span className="text-[#6C757D] font-mono">(NPSN: {school.npsn})</span>
           </div>
         </div>
 
