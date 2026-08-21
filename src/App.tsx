@@ -117,6 +117,8 @@ export const App: React.FC = () => {
           setAuditLogs={setAuditLogs}
           onOpenImportModal={() => setIsImportMasterOpen(true)}
           onBackToLanding={() => handleNavigate('landing')}
+          workspaceMode={workspaceMode}
+          onSwitchToReal={() => setIsLoginModalOpen(true)}
         />
       )}
 

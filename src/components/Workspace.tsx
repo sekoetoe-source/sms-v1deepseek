@@ -22,6 +22,7 @@ import {
   Trash2, 
   ExternalLink,
   ChevronRight,
+  ChevronDown,
   Database,
   GraduationCap,
   Clock,
@@ -31,7 +32,18 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
-  Cpu
+  Cpu,
+  Moon,
+  Sun,
+  Bell,
+  HelpCircle,
+  Info,
+  LogOut,
+  Folder,
+  User,
+  ShieldCheck,
+  ShieldAlert,
+  LogIn
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
@@ -63,6 +75,8 @@ interface WorkspaceProps {
   setAuditLogs: React.Dispatch<React.SetStateAction<AuditLog[]>>;
   onOpenImportModal: () => void;
   onBackToLanding: () => void;
+  workspaceMode?: 'real' | 'dummy';
+  onSwitchToReal?: () => void;
 }
 
 export const Workspace: React.FC<WorkspaceProps> = ({
@@ -76,9 +90,12 @@ export const Workspace: React.FC<WorkspaceProps> = ({
   auditLogs,
   setAuditLogs,
   onOpenImportModal,
-  onBackToLanding
+  onBackToLanding,
+  workspaceMode = 'real',
+  onSwitchToReal
 }) => {
   const [activeTab, setActiveTab] = useState<string>(initialTab);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('12_months');
   
   // Document Center State
   const [selectedDocId, setSelectedDocId] = useState<string>(documents[0]?.document_id || '');
@@ -595,292 +612,365 @@ export const Workspace: React.FC<WorkspaceProps> = ({
   }, [masterStudents, studentSearch, studentClassFilter]);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] flex flex-col font-body">
+    <div className="min-h-screen bg-[#FBFBFB] text-[#1A1A1A] flex font-body">
       
-      {/* Top Workspace Bar */}
-      <div className="bg-[#031534] text-white px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 shadow-sm">
-        
-        {/* Left School Context */}
-        <div className="flex items-center gap-3">
-          <img 
-            src={school.logoUrl} 
-            alt={school.name} 
-            className="w-8 h-8 object-contain rounded-md bg-white/10 p-1"
-          />
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-white tracking-tight">
-                {school.name}
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#00B894]/20 text-[#00B894] border border-[#00B894]/30">
-                T.P. {school.academicYear} ({school.semester})
+      {/* 1. EcoGrant Left Sidebar */}
+      <aside className="w-64 bg-[#072818] text-white flex flex-col justify-between shrink-0 min-h-screen sticky top-0 border-r border-[#0f3d24] z-40 hidden md:flex">
+        <div className="p-5 space-y-6">
+          
+          {/* Brand Header */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/10 p-1.5 flex items-center justify-center border border-white/20">
+              <img src={school.banyubiruLogoUrl || school.logoUrl} alt="Logo" className="h-full w-auto object-contain rounded" />
+            </div>
+            <div>
+              <div className="font-['Plus_Jakarta_Sans',sans-serif] font-black text-base text-white tracking-tight leading-tight flex items-center gap-1">
+                <span>EcoGrant AI</span>
+                <span className="text-[#00B894] text-xs">.id</span>
+              </div>
+              <span className="text-[10px] text-emerald-300/80 block mt-0.5 font-medium">
+                Generator Proposal &amp; Rekap
               </span>
             </div>
-            <p className="text-[11px] text-slate-300">
-              NPSN: {school.npsn} • Akreditasi: {school.accreditation} • Operator: <strong className="text-white">{school.operatorName}</strong>
-            </p>
           </div>
+
+          {/* Section: RUANG KERJA */}
+          <div className="space-y-1">
+            <div className="px-3 py-1.5 text-[11px] font-bold text-emerald-400/60 uppercase tracking-wider">
+              RUANG KERJA
+            </div>
+
+            <nav className="space-y-1">
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  activeTab === 'dashboard'
+                    ? 'bg-[#164e39] text-white shadow-sm'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <LayoutDashboard className="w-4 h-4 text-emerald-400" />
+                <span>Dashboard</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('documents')}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  activeTab === 'documents'
+                    ? 'bg-[#164e39] text-white shadow-sm'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <FileText className="w-4 h-4 text-emerald-400" />
+                  <span>Proposal / Dokumen</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] bg-white/10 text-emerald-300 font-bold">
+                  {workspaceMode === 'real' ? documents.length : 0}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('verification')}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  activeTab === 'verification'
+                    ? 'bg-[#164e39] text-white shadow-sm'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Ruang Verifikasi</span>
+                </div>
+                {workspaceMode === 'real' && metrics.needsReviewDocs > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-400 text-amber-950 font-extrabold animate-pulse">
+                    {metrics.needsReviewDocs}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setActiveTab('master')}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  activeTab === 'master'
+                    ? 'bg-[#164e39] text-white shadow-sm'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Users className="w-4 h-4 text-emerald-400" />
+                  <span>Database Siswa (Dapodik)</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] bg-white/10 text-emerald-300 font-bold">
+                  {masterStudents.length}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('export')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  activeTab === 'export'
+                    ? 'bg-[#164e39] text-white shadow-sm'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+                <span>Laporan &amp; Ekspor</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('audit')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  activeTab === 'audit'
+                    ? 'bg-[#164e39] text-white shadow-sm'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <Bell className="w-4 h-4 text-emerald-400" />
+                <span>Notifikasi &amp; Audit</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('settings')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  activeTab === 'settings'
+                    ? 'bg-[#164e39] text-white shadow-sm'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <User className="w-4 h-4 text-emerald-400" />
+                <span>Profil</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('ai_chat')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  activeTab === 'ai_chat'
+                    ? 'bg-[#164e39] text-white shadow-sm'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 text-cyan-300" />
+                <span>AI Assistant Chat</span>
+              </button>
+            </nav>
+          </div>
+
         </div>
 
-        {/* Right Action Switcher */}
-        <div className="flex items-center gap-2.5">
+        {/* Bottom Keluar Button */}
+        <div className="p-5 border-t border-[#0f3d24]">
           <button
             onClick={onBackToLanding}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left cursor-pointer"
           >
-            ← Kembali ke Landing Page
-          </button>
-          <button
-            onClick={() => setActiveTab('documents')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F97316] text-white hover:bg-[#ea580c] transition-colors shadow-xs"
-          >
-            <UploadCloud className="w-3.5 h-3.5" />
-            + Upload Dokumen Baru
+            <LogOut className="w-4 h-4 text-slate-400" />
+            <span>Keluar</span>
           </button>
         </div>
+      </aside>
 
-      </div>
+      {/* 2. Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        
+        {/* Top Header Bar (EcoGrant Style) */}
+        <header className="bg-white border-b border-slate-200/80 px-6 py-3.5 flex items-center justify-between gap-4 sticky top-0 z-30">
+          
+          {/* User Info Left */}
+          <div>
+            <h2 className="font-bold text-sm text-[#0b1c30] flex items-center gap-2">
+              <span>{workspaceMode === 'real' ? school.operatorName : 'Pengguna'}</span>
+            </h2>
+            <p className="text-[11px] text-slate-500">
+              {workspaceMode === 'real' ? `${school.name} • NPSN: ${school.npsn}` : 'Organisasi belum diisi'}
+            </p>
+          </div>
 
-      {/* Main Tab Navigation */}
-      <div className="bg-white border-b border-[#E6E6E6] sticky top-16 z-30 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto no-scrollbar">
-          <nav className="flex space-x-1 sm:space-x-2 py-2">
-            
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'dashboard'
-                  ? 'bg-[#031534] text-white shadow-xs'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Dashboard</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('ai_chat')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'ai_chat'
-                  ? 'bg-[#031534] text-white shadow-xs border border-[#00E5FF]/40'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
-            >
-              <Sparkles className="w-4 h-4 text-[#00E5FF] animate-pulse" />
-              <span>AI Studio Assistant</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">
-                Live Chat
+          {/* Actions Right */}
+          <div className="flex items-center gap-3">
+            {workspaceMode === 'dummy' ? (
+              <button
+                onClick={onSwitchToReal}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#134e4a] hover:bg-[#0f766e] text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5 text-emerald-300" />
+                <span>Masuk Data Real Operator</span>
+              </button>
+            ) : (
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                <span>Mode Data Real</span>
               </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('ai_router')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'ai_router'
-                  ? 'bg-[#031534] text-white shadow-xs border border-[#00E5FF]/50 shadow-[0_0_12px_rgba(0,229,255,0.2)]'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
-            >
-              <Cpu className="w-4 h-4 text-[#00E5FF]" />
-              <span>AI Model Router</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-blue-100 text-blue-800 font-bold">
-                9Router 3-Tier
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('documents')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'documents'
-                  ? 'bg-[#031534] text-white shadow-xs'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span>Pusat Dokumen & OCR</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 text-slate-800">
-                {documents.length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('verification')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'verification'
-                  ? 'bg-[#031534] text-white shadow-xs'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
-            >
-              <CheckCircle2 className="w-4 h-4 text-[#00B894]" />
-              <span>Ruang Verifikasi (Dual Screen)</span>
-              {metrics.needsReviewDocs > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-900 font-bold animate-pulse">
-                  {metrics.needsReviewDocs} Perlu Review
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveTab('master')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'master'
-                  ? 'bg-[#031534] text-white shadow-xs'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
-            >
-              <Users className="w-4 h-4" />
-              <span>Master Data Siswa</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 text-slate-800">
-                {masterStudents.length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('export')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'export'
-                  ? 'bg-[#031534] text-white shadow-xs'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span>Data Terstruktur & Ekspor</span>
-            </button>
+            )}
 
             <button
               onClick={() => setActiveTab('audit')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'audit'
-                  ? 'bg-[#031534] text-white shadow-xs'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
+              className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors relative cursor-pointer"
+              title="Notifikasi"
             >
-              <History className="w-4 h-4" />
-              <span>Audit Trail</span>
+              <Bell className="w-4 h-4" />
+              <span className="w-2 h-2 bg-rose-500 rounded-full absolute top-1.5 right-1.5"></span>
             </button>
 
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === 'settings'
-                  ? 'bg-[#031534] text-white shadow-xs'
-                  : 'text-[#44474E] hover:bg-[#F8F9FA] hover:text-[#031534]'
-              }`}
-            >
-              <Settings className="w-4 h-4" />
-              <span>Profil Sekolah</span>
-            </button>
+            <div className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer" title="Mode Gelap/Terang">
+              <Moon className="w-4 h-4" />
+            </div>
+          </div>
+        </header>
 
-          </nav>
-        </div>
-      </div>
-
-      {/* Main Workspace Body */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
-        
-        {/* ========================================================= */}
-        {/* TAB 1: DASHBOARD                                         */}
-        {/* ========================================================= */}
-        {activeTab === 'dashboard' && (
-          <div className="space-y-6">
-            
-            {/* Header Greeting & Time Saved Banner */}
-            <div className="bg-gradient-to-r from-[#031534] via-[#091b3a] to-[#006b55] text-white p-6 sm:p-8 rounded-2xl shadow-sm relative overflow-hidden">
-              <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 architectural-grid"></div>
+        {/* Dynamic Body Router */}
+        <main className="flex-1 p-6 sm:p-8 space-y-6 max-w-7xl w-full mx-auto">
+          
+          {/* ========================================================= */}
+          {/* TAB 1: DASHBOARD (EcoGrant Exact Style)                   */}
+          {/* ========================================================= */}
+          {activeTab === 'dashboard' && (
+            <div className="space-y-6">
               
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              {/* Header Greeting (EcoGrant Style) */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 text-emerald-300 text-[11px] font-semibold mb-2">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Sistem Operasional Aktif • Siap Memproses Dokumen
-                  </div>
-                  <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display">
-                    Selamat Datang, {school.operatorName}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-                    Panel otomasi data administrasi {school.name}. Tinjau hasil ekstraksi OCR dan verifikasi data siswa secara cepat.
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0b1c30] tracking-tight font-display">
+                    Selamat datang, {workspaceMode === 'real' ? school.operatorName.split(',')[0] : 'Pengguna'}
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                    Berikut ringkasan penyusunan proposal hibah pada ruang kerja Anda.
                   </p>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 text-center sm:text-right min-w-[200px]">
-                  <div className="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">
-                    Estimasi Waktu Dihemat
-                  </div>
-                  <div className="text-3xl font-extrabold text-white mt-0.5">
-                    {metrics.hoursSaved} Jam
-                  </div>
-                  <div className="text-[10px] text-slate-300">
-                    Berdasarkan {metrics.totalDocs} dokumen yang telah diproses
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 4 Metric Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              
-              <div className="bg-white p-5 rounded-xl border border-[#E6E6E6] shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#6C757D] uppercase">Siswa Terdaftar</span>
-                  <div className="w-8 h-8 rounded-lg bg-[#031534]/5 text-[#031534] flex items-center justify-center">
-                    <Users className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl font-extrabold text-[#031534] mt-2">
-                  {metrics.activeStudents}
-                </div>
-                <div className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  Sinkron dengan Dapodik Sekolah
+                <div className="relative">
+                  <select
+                    value={selectedPeriod}
+                    onChange={(e) => setSelectedPeriod(e.target.value)}
+                    className="appearance-none bg-white border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl pl-4 pr-9 py-2.5 shadow-2xs focus:outline-none focus:border-emerald-600 cursor-pointer"
+                  >
+                    <option value="12_months">12 bulan terakhir</option>
+                    <option value="semester_1">Semester Ganjil 2025/2026</option>
+                    <option value="current_month">Bulan Ini</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
 
-              <div className="bg-white p-5 rounded-xl border border-[#E6E6E6] shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#6C757D] uppercase">Dokumen Diproses</span>
-                  <div className="w-8 h-8 rounded-lg bg-[#006b55]/10 text-[#006b55] flex items-center justify-center">
-                    <FileText className="w-4 h-4" />
+              {/* 4 Metric Cards (EcoGrant Exact Style) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                {/* 1. TOTAL PROPOSAL */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    TOTAL PROPOSAL
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">
+                    {workspaceMode === 'real' ? metrics.totalDocs : 0}
                   </div>
                 </div>
-                <div className="text-2xl font-extrabold text-[#031534] mt-2">
-                  {metrics.totalDocs} Berkas
+
+                {/* 2. DRAFT DAN SEDANG DISUSUN */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    DRAFT DAN SEDANG DISUSUN
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">
+                    {workspaceMode === 'real' ? documents.filter(d => d.status === 'Uploaded').length : 0}
+                  </div>
                 </div>
-                <div className="text-[11px] text-[#6C757D] mt-1">
-                  Total {metrics.totalRecords} baris record diekstrak
+
+                {/* 3. DALAM PENINJAUAN */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    DALAM PENINJAUAN
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">
+                    {workspaceMode === 'real' ? metrics.needsReviewDocs : 0}
+                  </div>
+                </div>
+
+                {/* 4. DISETUJUI DAN SELESAI */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    DISETUJUI DAN SELESAI
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">
+                    {workspaceMode === 'real' ? documents.filter(d => d.status === 'Verified').length : 0}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Wide Metric Card: TOTAL NILAI HIBAH DIAJUKAN (EcoGrant Exact Style) */}
+              <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-1">
+                <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  TOTAL NILAI HIBAH DIAJUKAN
+                </div>
+                <div className="text-2xl sm:text-3xl font-extrabold text-[#006b55] font-display">
+                  {workspaceMode === 'real' ? `Rp ${(masterStudents.length * 1500000).toLocaleString('id-ID')}` : 'Rp 0'}
                 </div>
               </div>
 
-              <div className="bg-white p-5 rounded-xl border border-[#E6E6E6] shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#6C757D] uppercase">Perlu Verifikasi</span>
-                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-700 flex items-center justify-center">
-                    <AlertCircle className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl font-extrabold text-amber-600 mt-2">
-                  {metrics.needsReviewDocs} Dokumen
-                </div>
-                <div className="text-[11px] text-amber-800 font-semibold mt-1">
-                  Menunggu konfirmasi operator
-                </div>
-              </div>
+              {/* Lower 2 Cards Grid: Proposal per Status & Proposal per Bulan (EcoGrant Exact Style) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* Left Card: Proposal per Status */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs min-h-[220px] flex flex-col justify-between">
+                  <h3 className="font-bold text-sm text-slate-900">
+                    Proposal per Status
+                  </h3>
+                  
+                  {workspaceMode === 'dummy' || documents.length === 0 ? (
+                    <div className="py-12 text-center text-xs text-slate-400">
+                      Belum ada data untuk ditampilkan.
+                    </div>
+                  ) : (
+                    <div className="space-y-3 pt-4">
+                      <div>
+                        <div className="flex justify-between text-xs font-semibold mb-1">
+                          <span className="text-slate-700">Disetujui &amp; Selesai</span>
+                          <span className="text-emerald-700 font-bold">{documents.filter(d => d.status === 'Verified').length} Dokumen</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2">
+                          <div className="bg-emerald-600 h-2 rounded-full" style={{ width: `${(documents.filter(d => d.status === 'Verified').length / (documents.length || 1)) * 100}%` }}></div>
+                        </div>
+                      </div>
 
-              <div className="bg-white p-5 rounded-xl border border-[#E6E6E6] shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#6C757D] uppercase">Record Terverifikasi</span>
-                  <div className="w-8 h-8 rounded-lg bg-emerald-600/10 text-emerald-700 flex items-center justify-center">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
+                      <div>
+                        <div className="flex justify-between text-xs font-semibold mb-1">
+                          <span className="text-slate-700">Dalam Peninjauan</span>
+                          <span className="text-amber-700 font-bold">{metrics.needsReviewDocs} Dokumen</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2">
+                          <div className="bg-amber-500 h-2 rounded-full" style={{ width: `${(metrics.needsReviewDocs / (documents.length || 1)) * 100}%` }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="text-2xl font-extrabold text-emerald-600 mt-2">
-                  {metrics.verifiedRecords} / {metrics.totalRecords}
-                </div>
-                <div className="text-[11px] text-emerald-800 font-semibold mt-1">
-                  Siap diunduh ke Excel / PDF
-                </div>
-              </div>
 
-            </div>
+                {/* Right Card: Proposal per Bulan */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs min-h-[220px] flex flex-col justify-between">
+                  <h3 className="font-bold text-sm text-slate-900">
+                    Proposal per Bulan
+                  </h3>
+
+                  {workspaceMode === 'dummy' || documents.length === 0 ? (
+                    <div className="py-12 text-center text-xs text-slate-400">
+                      Belum ada data untuk ditampilkan.
+                    </div>
+                  ) : (
+                    <div className="pt-4 flex items-end justify-between gap-3 h-32">
+                      {['Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des', 'Jan', 'Feb', 'Mar'].map((m, i) => (
+                        <div key={m} className="flex-1 flex flex-col items-center gap-1.5">
+                          <div 
+                            className="w-full bg-[#134e4a] rounded-t-md transition-all hover:bg-emerald-600" 
+                            style={{ height: `${Math.max(12, (i + 1) * 11)}%` }}
+                          ></div>
+                          <span className="text-[10px] text-slate-500 font-mono">{m}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+              </div>
 
             {/* Quick Actions & Recent Documents */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -2385,6 +2475,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         )}
 
       </main>
+      </div>
 
       {/* Manual Match Modal */}
       {manualMatchRecord && (
