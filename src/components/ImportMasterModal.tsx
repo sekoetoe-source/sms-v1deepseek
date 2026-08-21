@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   X, 
   UploadCloud, 
@@ -7,8 +7,17 @@ import {
   FileSpreadsheet, 
   Database,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Download,
+  Check,
+  FileCheck,
+  RefreshCw,
+  Layers,
+  Users,
+  Building2,
+  HelpCircle
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import confetti from 'canvas-confetti';
 import { Student } from '../types';
 
@@ -25,11 +34,16 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
   onImportComplete,
   existingCount
 }) => {
-  const [fileSelected, setFileSelected] = useState<boolean>(false);
-  const [fileName, setFileName] = useState<string>('Dapodik_Export_SMPN99_SemesterGanjil.xlsx');
-  const [selectedSource, setSelectedSource] = useState<'preset' | 'dapodik' | 'excel' | 'dapodik_api'>('dapodik_api');
+  const [selectedSource, setSelectedSource] = useState<'preset' | 'dapodik_file' | 'excel' | 'dapodik_api'>('preset');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
   
+  // Custom File State
+  const [customFileName, setCustomFileName] = useState<string | null>(null);
+  const [customFileSize, setCustomFileSize] = useState<string | null>(null);
+  const [parsedCustomStudents, setParsedCustomStudents] = useState<Student[]>([]);
+  const [fileParseError, setFileParseError] = useState<string | null>(null);
+
   // Dapodik Web Service API Credentials
   const [dapodikHost, setDapodikHost] = useState<string>('http://localhost:5774');
   const [dapodikNpsn, setDapodikNpsn] = useState<string>('20102589');
@@ -42,14 +56,19 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
   const [syncGuru, setSyncGuru] = useState<boolean>(true);
   const [syncPtk, setSyncPtk] = useState<boolean>(true);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   if (!isOpen) return null;
 
+  // Mock sample rows for preview
   const sampleSiswaRows = [
     { nisn: '0098451201', nis: '232407001', nama: 'Ahmad Fauzan', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif' },
     { nisn: '0098451202', nis: '232407002', nama: 'Budi Santoso', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif' },
     { nisn: '0098451203', nis: '232407003', nama: 'Citra Kirana Dewi', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif' },
     { nisn: '0098451204', nis: '232407004', nama: 'Dimas Anggara Putra', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif' },
-    { nisn: '0098451205', nis: '232407005', nama: 'Eka Putri Lestari', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif' }
+    { nisn: '0098451205', nis: '232407005', nama: 'Eka Putri Lestari', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif' },
+    { nisn: '0098451206', nis: '232407006', nama: 'Fajar Nugraha', kelas: 'VIII-A', rombel: 'Kelas 8A', status: 'Aktif' },
+    { nisn: '0098451207', nis: '232407007', nama: 'Gita Gutawa Wardani', kelas: 'VIII-A', rombel: 'Kelas 8A', status: 'Aktif' }
   ];
 
   const sampleGuruRows = [
@@ -67,10 +86,103 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
     { nuptk: '8431605921450088', nip: '-', nama: 'Sri Wahyuni, A.Md.', jenis: 'Kepala Perpustakaan', status: 'Honor Sekolah', gender: 'P' }
   ];
 
+  // FILE PARSER HANDLER (XLSX / CSV)
+  const handleFileSelected = async (file: File) => {
+    setFileParseError(null);
+    setCustomFileName(file.name);
+    setCustomFileSize((file.size / (1024 * 1024)).toFixed(2) + ' MB');
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      if (!jsonData || jsonData.length < 2) {
+        throw new Error('File tidak memiliki data atau baris kosong.');
+      }
+
+      // Find header row
+      let headerRowIndex = 0;
+      for (let i = 0; i < Math.min(10, jsonData.length); i++) {
+        const rowStr = JSON.stringify(jsonData[i]).toLowerCase();
+        if (rowStr.includes('nama') || rowStr.includes('nisn') || rowStr.includes('nis')) {
+          headerRowIndex = i;
+          break;
+        }
+      }
+
+      const headers: string[] = jsonData[headerRowIndex].map((h: any) => String(h || '').toLowerCase().trim());
+      const namaIdx = headers.findIndex(h => h.includes('nama') || h.includes('siswa') || h.includes('peserta didik'));
+      const nisnIdx = headers.findIndex(h => h.includes('nisn'));
+      const nisIdx = headers.findIndex(h => h.includes('nis') && !h.includes('nisn'));
+      const kelasIdx = headers.findIndex(h => h.includes('kelas') || h.includes('tingkat'));
+      const rombelIdx = headers.findIndex(h => h.includes('rombel'));
+      const genderIdx = headers.findIndex(h => h.includes('jk') || h.includes('gender') || h.includes('kelamin'));
+
+      const parsedList: Student[] = [];
+      for (let r = headerRowIndex + 1; r < jsonData.length; r++) {
+        const row = jsonData[r];
+        if (!row || row.length === 0) continue;
+
+        const rawNama = namaIdx !== -1 ? String(row[namaIdx] || '').trim() : '';
+        if (!rawNama || rawNama.length < 2) continue;
+
+        const rawNisn = nisnIdx !== -1 && row[nisnIdx] ? String(row[nisnIdx]).trim() : `00984${String(r).padStart(5, '0')}`;
+        const rawNis = nisIdx !== -1 && row[nisIdx] ? String(row[nisIdx]).trim() : `2324${String(r).padStart(5, '0')}`;
+        const rawKelas = kelasIdx !== -1 && row[kelasIdx] ? String(row[kelasIdx]).trim() : 'VIII-A';
+        const rawRombel = rombelIdx !== -1 && row[rombelIdx] ? String(row[rombelIdx]).trim() : `Kelas ${rawKelas}`;
+        const rawGender = genderIdx !== -1 && String(row[genderIdx]).toUpperCase().startsWith('P') ? 'P' : 'L';
+
+        parsedList.push({
+          student_id: `STU-FILE-${r}`,
+          source_id: `DAPO-FILE-${rawNisn}`,
+          nis: rawNis,
+          nisn: rawNisn,
+          nama: rawNama,
+          kelas: rawKelas,
+          rombel: rawRombel,
+          status: 'Aktif',
+          academic_year: '2025/2026',
+          gender: rawGender,
+          wali_kelas: 'Wali Kelas ' + rawKelas
+        });
+      }
+
+      if (parsedList.length === 0) {
+        throw new Error('Tidak dapat menemukan kolom Nama Siswa di file ini. Pastikan format tabel memiliki kolom NAMA.');
+      }
+
+      setParsedCustomStudents(parsedList);
+    } catch (err: any) {
+      console.error('Failed to parse spreadsheet:', err);
+      setFileParseError(err.message || 'Format file tidak dapat dibaca.');
+    }
+  };
+
+  const handleDownloadTemplate = () => {
+    const templateData = [
+      ['KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI'],
+      ['FORMAT IMPORT MASTER DATA PESERTA DIDIK DAPODIK'],
+      [''],
+      ['NO', 'NISN', 'NIS', 'NAMA LENGKAP SISWA', 'JENIS KELAMIN (L/P)', 'TINGKAT/KELAS', 'ROMBEL', 'STATUS', 'NAMA WALI KELAS'],
+      ['1', '0098451201', '232407001', 'Ahmad Fauzan', 'L', 'VIII', 'Kelas 8A', 'Aktif', 'Drs. Supriyadi'],
+      ['2', '0098451202', '232407002', 'Budi Santoso', 'L', 'VIII', 'Kelas 8A', 'Aktif', 'Drs. Supriyadi'],
+      ['3', '0098451203', '232407003', 'Citra Kirana Dewi', 'P', 'VIII', 'Kelas 8B', 'Aktif', 'Dra. Hj. Nurhayati, M.Pd.'],
+      ['4', '0098451204', '232407004', 'Dimas Anggara Putra', 'L', 'VIII', 'Kelas 8B', 'Aktif', 'Dra. Hj. Nurhayati, M.Pd.'],
+      ['5', '0098451205', '232407005', 'Eka Putri Lestari', 'P', 'VIII', 'Kelas 8B', 'Aktif', 'Dra. Hj. Nurhayati, M.Pd.']
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(templateData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Master_Siswa');
+    XLSX.writeFile(wb, 'Template_Master_Dapodik_SMP.xlsx');
+  };
+
   const handleTestDapodikConnection = async () => {
     setApiConnectionStatus('testing');
     try {
-      // Attempt live fetch to Dapodik API if accessible locally
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 1200);
       await fetch(`${dapodikHost}/WebService/getPesertaDidik?npsn=${dapodikNpsn}`, {
@@ -83,54 +195,75 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
     } finally {
       setTimeout(() => {
         setApiConnectionStatus('connected');
-      }, 600);
+      }, 700);
     }
   };
 
   const handleExecuteImport = () => {
     setIsProcessing(true);
+
     setTimeout(() => {
       setIsProcessing(false);
-      confetti({ particleCount: 100, spread: 90, origin: { y: 0.6 } });
-      
-      // Generate 841 new Dapodik students so master total changes from 24 to 865
-      const namesList = [
-        "Aditya Pratama", "Anisa Nur Aini", "Bayu Saputra", "Cantika Dewi Maharani", "Danang Wijaya",
-        "Elvira Novita", "Farhan Maulana", "Grace Natalia", "Haikal Fadhilah", "Intan Permatasari",
-        "Joko Susilo", "Kiki Amalia", "Lukman Hakim", "Maya Sandrina", "Naufal Ahmad",
-        "Oktavia Rahma", "Pandu Wijaya", "Qonita Zahra", "Raihan Ramadan", "Siti Aminah",
-        "Taufik Hidayat", "Umar Al-Faruq", "Vina Panduwinata", "Wawan Setiawan", "Yusuf Mansur"
-      ];
-      const classes = ['VII-A', 'VII-B', 'VII-C', 'VIII-A', 'VIII-B', 'VIII-C', 'IX-A', 'IX-B', 'IX-C'];
-      
-      const newDapodikBatch: Student[] = Array.from({ length: 841 }, (_, i) => {
-        const nameIdx = i % namesList.length;
-        const clsIdx = i % classes.length;
-        const numStr = String(i + 100).padStart(4, '0');
-        return {
-          student_id: `STU-DAPO-${i + 100}`,
-          source_id: `DAPO-99-${numStr}`,
-          nis: `242507${numStr}`,
-          nisn: `01084${numStr}`,
-          nama: `${namesList[nameIdx]} (${i + 1})`,
-          kelas: classes[clsIdx],
-          rombel: `Kelas ${classes[clsIdx]}`,
-          status: 'Aktif' as const,
-          academic_year: '2025/2026',
-          gender: (i % 2 === 0 ? 'L' : 'P') as 'L' | 'P',
-          wali_kelas: 'Dra. Hj. Nurhayati, M.Pd.'
-        };
-      });
+      confetti({ particleCount: 120, spread: 100, origin: { y: 0.6 } });
 
-      onImportComplete(newDapodikBatch);
+      if (parsedCustomStudents.length > 0) {
+        // User uploaded custom file
+        onImportComplete(parsedCustomStudents);
+      } else {
+        // Preset Seed: Generate 841 new Dapodik students for SMP Negeri 99 Jakarta
+        const namesList = [
+          "Aditya Pratama", "Anisa Nur Aini", "Bayu Saputra", "Cantika Dewi Maharani", "Danang Wijaya",
+          "Elvira Novita", "Farhan Maulana", "Grace Natalia", "Haikal Fadhilah", "Intan Permatasari",
+          "Joko Susilo", "Kiki Amalia", "Lukman Hakim", "Maya Sandrina", "Naufal Ahmad",
+          "Oktavia Rahma", "Pandu Wijaya", "Qonita Zahra", "Raihan Ramadan", "Siti Aminah",
+          "Taufik Hidayat", "Umar Al-Faruq", "Vina Panduwinata", "Wawan Setiawan", "Yusuf Mansur"
+        ];
+        const classes = ['VII-A', 'VII-B', 'VII-C', 'VIII-A', 'VIII-B', 'VIII-C', 'IX-A', 'IX-B', 'IX-C'];
+        
+        const newDapodikBatch: Student[] = Array.from({ length: 841 }, (_, i) => {
+          const nameIdx = i % namesList.length;
+          const clsIdx = i % classes.length;
+          const numStr = String(i + 100).padStart(4, '0');
+          return {
+            student_id: `STU-DAPO-${i + 100}`,
+            source_id: `DAPO-99-${numStr}`,
+            nis: `242507${numStr}`,
+            nisn: `01084${numStr}`,
+            nama: `${namesList[nameIdx]} (${i + 1})`,
+            kelas: classes[clsIdx],
+            rombel: `Kelas ${classes[clsIdx]}`,
+            status: 'Aktif' as const,
+            academic_year: '2025/2026',
+            gender: (i % 2 === 0 ? 'L' : 'P') as 'L' | 'P',
+            wali_kelas: 'Dra. Hj. Nurhayati, M.Pd.'
+          };
+        });
+
+        onImportComplete(newDapodikBatch);
+      }
+
       onClose();
     }, 1200);
   };
 
+  const previewList = parsedCustomStudents.length > 0 ? parsedCustomStudents.slice(0, 15) : sampleSiswaRows;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
       <div className="bg-white rounded-2xl max-w-3xl w-full border border-[#E6E6E6] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         
+        {/* Hidden File Input for Excel/CSV */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".xlsx,.xls,.csv"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFileSelected(file);
+          }}
+        />
+
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E6E6E6] bg-[#F8F9FA]">
           <div className="flex items-center gap-2.5">
@@ -139,16 +272,16 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-[#031534] text-base">
-                Import Master Data Dapodik (Siswa, Guru & PTK)
+                Import Master Data Dapodik (Siswa, Guru &amp; PTK)
               </h3>
               <p className="text-xs text-[#6C757D]">
-                Integrasi Web Service API Resmi Dapodik Kemendikbudristek & File Export
+                Integrasi Web Service API Resmi Dapodik Kemendikbudristek &amp; File Spreadsheet
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#6C757D] hover:bg-[#E6E6E6] hover:text-[#031534]"
+            className="p-1.5 rounded-lg text-[#6C757D] hover:bg-[#E6E6E6] hover:text-[#031534] cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -160,15 +293,17 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
           {/* Source Selection */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-[#031534] uppercase tracking-wider">
-              Pilih Sumber Master Data:
+              PILIH SUMBER MASTER DATA:
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              
+              {/* Option 1: Web Service API */}
               <button
                 type="button"
-                onClick={() => { setSelectedSource('dapodik_api'); setFileSelected(true); }}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                onClick={() => setSelectedSource('dapodik_api')}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                   selectedSource === 'dapodik_api'
-                    ? 'border-[#00B894] bg-[#00B894]/5 ring-1 ring-[#00B894]'
+                    ? 'border-[#00B894] bg-[#00B894]/10 ring-2 ring-[#00B894]'
                     : 'border-[#E6E6E6] hover:bg-[#F8F9FA]'
                 }`}
               >
@@ -179,12 +314,13 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                 <div className="text-[11px] text-[#006b55] font-semibold mt-0.5">Direct Sync (Live)</div>
               </button>
 
+              {/* Option 2: Seed Dapodik SMPN 99 */}
               <button
                 type="button"
-                onClick={() => { setSelectedSource('preset'); setFileSelected(true); }}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                onClick={() => setSelectedSource('preset')}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                   selectedSource === 'preset'
-                    ? 'border-[#00B894] bg-[#00B894]/5 ring-1 ring-[#00B894]'
+                    ? 'border-[#00B894] bg-[#00B894]/10 ring-2 ring-[#00B894]'
                     : 'border-[#E6E6E6] hover:bg-[#F8F9FA]'
                 }`}
               >
@@ -192,12 +328,16 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                 <div className="text-[11px] text-[#6C757D] mt-0.5">865 Siswa + 56 GTK</div>
               </button>
 
+              {/* Option 3: Export File Dapodik */}
               <button
                 type="button"
-                onClick={() => { setSelectedSource('dapodik'); setFileSelected(true); }}
-                className={`p-3 rounded-xl border text-left transition-all ${
-                  selectedSource === 'dapodik'
-                    ? 'border-[#00B894] bg-[#00B894]/5 ring-1 ring-[#00B894]'
+                onClick={() => {
+                  setSelectedSource('dapodik_file');
+                  fileInputRef.current?.click();
+                }}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  selectedSource === 'dapodik_file'
+                    ? 'border-[#00B894] bg-[#00B894]/10 ring-2 ring-[#00B894]'
                     : 'border-[#E6E6E6] hover:bg-[#F8F9FA]'
                 }`}
               >
@@ -205,22 +345,27 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                 <div className="text-[11px] text-[#6C757D] mt-0.5">Format .xlsx / .csv</div>
               </button>
 
+              {/* Option 4: Template Excel */}
               <button
                 type="button"
-                onClick={() => { setSelectedSource('excel'); setFileSelected(true); }}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                onClick={() => {
+                  setSelectedSource('excel');
+                  fileInputRef.current?.click();
+                }}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                   selectedSource === 'excel'
-                    ? 'border-[#00B894] bg-[#00B894]/5 ring-1 ring-[#00B894]'
+                    ? 'border-[#00B894] bg-[#00B894]/10 ring-2 ring-[#00B894]'
                     : 'border-[#E6E6E6] hover:bg-[#F8F9FA]'
                 }`}
               >
                 <div className="font-bold text-xs text-[#031534]">Template Excel</div>
                 <div className="text-[11px] text-[#6C757D] mt-0.5">Kolom Fleksibel</div>
               </button>
+
             </div>
           </div>
 
-          {/* Conditional Form / Upload Area */}
+          {/* Conditional Form / Upload Box Area */}
           {selectedSource === 'dapodik_api' ? (
             <div className="border border-[#00B894]/30 rounded-xl p-4 bg-emerald-50/40 space-y-3">
               <div className="flex items-center justify-between">
@@ -318,31 +463,83 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                       <span className="w-3 h-3 border-2 border-amber-600 border-t-transparent rounded-full animate-spin inline-block"></span> Menghubungkan ke {dapodikHost}...
                     </span>
                   ) : (
-                    <span className="text-[#6C757D]">Endpoint REST API: <code className="text-[#031534] font-mono text-[10px] bg-white px-1 py-0.5 rounded border border-[#CBD5E1]">/WebService/getPesertaDidik</code> & <code className="text-[#031534] font-mono text-[10px] bg-white px-1 py-0.5 rounded border border-[#CBD5E1]">/WebService/getGtk</code></span>
+                    <span className="text-[#6C757D]">Endpoint REST API: <code className="text-[#031534] font-mono text-[10px] bg-white px-1 py-0.5 rounded border border-[#CBD5E1]">/WebService/getPesertaDidik</code> &amp; <code className="text-[#031534] font-mono text-[10px] bg-white px-1 py-0.5 rounded border border-[#CBD5E1]">/WebService/getGtk</code></span>
                   )}
                 </div>
                 <button
                   type="button"
                   onClick={handleTestDapodikConnection}
                   disabled={apiConnectionStatus === 'testing'}
-                  className="px-3.5 py-1.5 bg-[#031534] hover:bg-[#1a2a4a] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 bg-[#031534] hover:bg-[#1a2a4a] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-[#00B894]" />
-                  Tes Koneksi & Tarik API
+                  <span>Tes Koneksi &amp; Tarik API</span>
                 </button>
               </div>
             </div>
           ) : (
-            <div className="border-2 border-dashed border-[#CBD5E1] rounded-xl p-5 text-center bg-[#F8F9FA]">
-              <UploadCloud className="w-8 h-8 mx-auto text-[#006b55] mb-2" />
-              <p className="text-xs font-semibold text-[#031534]">
-                {selectedSource === 'preset' 
-                  ? 'Master Data Dapodik SMP Negeri 99 Jakarta siap dimuat'
-                  : 'Tarik & lepas file Excel / Dapodik Anda di sini, atau klik untuk memilih'}
+            /* Upload / Dropzone Box */
+            <div 
+              onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
+              onDragLeave={() => setIsDraggingOver(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(false);
+                const file = e.dataTransfer.files?.[0];
+                if (file) handleFileSelected(file);
+              }}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer ${
+                isDraggingOver 
+                  ? 'border-blue-500 bg-blue-50/50 ring-2 ring-blue-200' 
+                  : parsedCustomStudents.length > 0 
+                  ? 'border-emerald-500 bg-emerald-50/30' 
+                  : 'border-[#CBD5E1] bg-[#F8F9FA] hover:bg-slate-100/70'
+              }`}
+            >
+              <UploadCloud className={`w-9 h-9 mx-auto mb-2 transition-colors ${
+                parsedCustomStudents.length > 0 ? 'text-emerald-600' : 'text-[#006b55]'
+              }`} />
+              
+              <p className="text-xs font-bold text-[#031534]">
+                {parsedCustomStudents.length > 0 ? (
+                  <span className="text-emerald-800">
+                    ✓ File Berhasil Dibaca: {customFileName} ({parsedCustomStudents.length} Siswa Siap Diimport)
+                  </span>
+                ) : selectedSource === 'preset' ? (
+                  'Master Data Dapodik SMP Negeri 99 Jakarta siap dimuat'
+                ) : (
+                  'Tarik & lepas file Excel (.xlsx / .csv) Anda di sini, atau klik untuk memilih file'
+                )}
               </p>
+
               <p className="text-[11px] text-[#6C757D] mt-1">
-                File: <span className="font-mono text-[#031534] font-medium">{fileName}</span> (1.4 MB)
+                {customFileName ? (
+                  <span>Ukuran: <strong className="font-mono text-slate-800">{customFileSize}</strong> • Klik untuk ganti file</span>
+                ) : (
+                  <span>File: <span className="font-mono text-[#031534] font-medium">Dapodik_Export_SMPN99_SemesterGanjil.xlsx</span> (1.4 MB)</span>
+                )}
               </p>
+
+              {fileParseError && (
+                <div className="mt-2 text-xs text-rose-600 font-semibold bg-rose-50 p-2 rounded-lg border border-rose-200 inline-block">
+                  ⚠️ {fileParseError}
+                </div>
+              )}
+
+              <div className="mt-3 flex items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDownloadTemplate();
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-semibold rounded-lg border border-slate-300 shadow-2xs cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Unduh Template Excel Kosong</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -350,22 +547,25 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
           <div className="bg-white p-4 rounded-xl border border-[#E6E6E6] space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-[#031534]">Hasil Validasi Otomatis (Web Service Dapodik)</span>
-              <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                ✓ Validasi Lolos
+              <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
+                <Check className="w-3.5 h-3.5" />
+                Validasi Struktur Lolos
               </span>
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-xs">
               <div className="p-2.5 rounded-lg bg-[#F8F9FA] border border-[#E6E6E6]">
                 <div className="text-[#6C757D] text-[10px]">Data Siswa (Peserta Didik)</div>
-                <div className="font-bold text-sm text-[#031534]">865 Siswa</div>
+                <div className="font-bold text-sm text-[#031534]">
+                  {parsedCustomStudents.length > 0 ? `${parsedCustomStudents.length} Siswa` : '865 Siswa'}
+                </div>
               </div>
               <div className="p-2.5 rounded-lg bg-[#F8F9FA] border border-[#E6E6E6]">
                 <div className="text-[#6C757D] text-[10px]">Data Guru (GTK)</div>
                 <div className="font-bold text-sm text-emerald-600">42 Guru Terverifikasi</div>
               </div>
               <div className="p-2.5 rounded-lg bg-[#F8F9FA] border border-[#E6E6E6]">
-                <div className="text-[#6C757D] text-[10px]">Data PTK & Staf</div>
+                <div className="text-[#6C757D] text-[10px]">Data PTK &amp; Staf</div>
                 <div className="font-bold text-sm text-emerald-600">14 PTK / Administrasi</div>
               </div>
             </div>
@@ -373,24 +573,24 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
             {/* Table Preview Header with Tabs */}
             <div className="flex items-center justify-between border-b border-[#E6E6E6] pt-1 pb-2">
               <div className="text-[11px] font-bold text-[#6C757D] uppercase">
-                Preview Data Terbaca Dari Dapodik:
+                Pratinjau Data Terbaca:
               </div>
               <div className="flex items-center gap-1.5 text-xs">
                 <button
                   type="button"
                   onClick={() => setActivePreviewTab('siswa')}
-                  className={`px-2.5 py-1 rounded-md font-semibold text-[11px] transition-colors ${
+                  className={`px-2.5 py-1 rounded-md font-semibold text-[11px] transition-colors cursor-pointer ${
                     activePreviewTab === 'siswa'
                       ? 'bg-[#031534] text-white shadow-xs'
                       : 'bg-[#F8F9FA] text-[#6C757D] hover:bg-[#E6E6E6]'
                   }`}
                 >
-                  Siswa (865)
+                  Siswa ({parsedCustomStudents.length > 0 ? parsedCustomStudents.length : '865'})
                 </button>
                 <button
                   type="button"
                   onClick={() => setActivePreviewTab('guru')}
-                  className={`px-2.5 py-1 rounded-md font-semibold text-[11px] transition-colors ${
+                  className={`px-2.5 py-1 rounded-md font-semibold text-[11px] transition-colors cursor-pointer ${
                     activePreviewTab === 'guru'
                       ? 'bg-[#031534] text-white shadow-xs'
                       : 'bg-[#F8F9FA] text-[#6C757D] hover:bg-[#E6E6E6]'
@@ -401,13 +601,13 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setActivePreviewTab('ptk')}
-                  className={`px-2.5 py-1 rounded-md font-semibold text-[11px] transition-colors ${
+                  className={`px-2.5 py-1 rounded-md font-semibold text-[11px] transition-colors cursor-pointer ${
                     activePreviewTab === 'ptk'
                       ? 'bg-[#031534] text-white shadow-xs'
                       : 'bg-[#F8F9FA] text-[#6C757D] hover:bg-[#E6E6E6]'
                   }`}
                 >
-                  PTK & Staf (14)
+                  PTK &amp; Staf (14)
                 </button>
               </div>
             </div>
@@ -426,7 +626,7 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E6E6E6]">
-                    {sampleSiswaRows.map((r, i) => (
+                    {previewList.map((r, i) => (
                       <tr key={i} className="hover:bg-[#F8F9FA]">
                         <td className="p-2 font-mono text-[11px] text-[#44474E]">{r.nisn}</td>
                         <td className="p-2 font-mono text-[11px] text-[#44474E]">{r.nis}</td>
@@ -515,23 +715,23 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
             <button
               onClick={onClose}
               disabled={isProcessing}
-              className="px-4 py-2 rounded-lg text-xs font-medium text-[#6C757D] hover:bg-[#E6E6E6]"
+              className="px-4 py-2 rounded-lg text-xs font-medium text-[#6C757D] hover:bg-[#E6E6E6] cursor-pointer"
             >
               Batal
             </button>
             <button
               onClick={handleExecuteImport}
               disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-[#031534] text-white hover:bg-[#1a2a4a] shadow-sm disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-[#031534] hover:bg-[#1a2a4a] text-white shadow-sm disabled:opacity-50 cursor-pointer transition-all active:scale-98"
             >
               {isProcessing ? (
                 <>
                   <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                  Memproses Sync Dapodik...
+                  <span>Memproses Sync Dapodik...</span>
                 </>
               ) : (
                 <>
-                  Tarik & Sinkronkan Master Data
+                  <span>Tarik &amp; Sinkronkan Master Data</span>
                   <ArrowRight className="w-4 h-4 text-[#00B894]" />
                 </>
               )}
