@@ -119,32 +119,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </>
           ) : (
-            <>
-              <button 
-                onClick={() => onNavigate('landing')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#44474E] hover:bg-[#EDEEEF] border border-[#E6E6E6] transition-colors cursor-pointer"
-              >
-                <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-                <span>Halaman Depan</span>
-              </button>
-
-              {workspaceMode === 'dummy' ? (
-                <button 
-                  onClick={onOpenLogin}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold bg-[#134e4a] text-white hover:bg-[#0f766e] transition-colors shadow-2xs cursor-pointer"
-                >
-                  <LogIn className="w-3.5 h-3.5 text-emerald-300" />
-                  <span>Masuk Data Real</span>
-                </button>
-              ) : (
-                <button 
-                  onClick={() => onNavigate('workspace', 'documents', 'real')}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#006b55] text-white hover:bg-[#005241] transition-colors shadow-2xs cursor-pointer"
-                >
-                  + Upload Dokumen Real
-                </button>
-              )}
-            </>
+            <button 
+              onClick={() => onNavigate('landing')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#44474E] hover:bg-[#EDEEEF] border border-[#E6E6E6] transition-colors cursor-pointer"
+            >
+              <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+              <span>Halaman Depan</span>
+            </button>
           )}
         </div>
 
