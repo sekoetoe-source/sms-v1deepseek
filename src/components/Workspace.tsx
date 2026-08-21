@@ -624,12 +624,11 @@ export const Workspace: React.FC<WorkspaceProps> = ({
               <img src={school.banyubiruLogoUrl || school.logoUrl} alt="Logo" className="h-full w-auto object-contain rounded" />
             </div>
             <div>
-              <div className="font-['Plus_Jakarta_Sans',sans-serif] font-black text-base text-white tracking-tight leading-tight flex items-center gap-1">
-                <span>EcoGrant AI</span>
-                <span className="text-[#00B894] text-xs">.id</span>
+              <div className="font-['Plus_Jakarta_Sans',sans-serif] font-black text-lg text-white tracking-tight leading-tight">
+                Banyubiru
               </div>
-              <span className="text-[10px] text-emerald-300/80 block mt-0.5 font-medium">
-                Generator Proposal &amp; Rekap
+              <span className="text-[10px] text-emerald-400 font-medium block mt-0.5">
+                Sistem Manajemen Sekolah
               </span>
             </div>
           </div>
