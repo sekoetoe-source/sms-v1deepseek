@@ -102,6 +102,8 @@ export const Workspace: React.FC<WorkspaceProps> = ({
   const [studentSearch, setStudentSearch] = useState<string>('');
   const [studentClassFilter, setStudentClassFilter] = useState<string>('ALL');
   const [isAddStudentOpen, setIsAddStudentOpen] = useState<boolean>(false);
+  const [isClearStudentsModalOpen, setIsClearStudentsModalOpen] = useState<boolean>(false);
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [newStudentData, setNewStudentData] = useState<Partial<Student>>({
     nama: '',
     nisn: '',
@@ -512,6 +514,64 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         action: 'Tambah Siswa Baru ke Master Data',
         afterValue: `${created.nama} (${created.kelas})`,
         type: 'import'
+      },
+      ...prev
+    ]);
+  };
+
+  // Delete single student
+  const handleDeleteStudent = (studentId: string, studentName: string) => {
+    setMasterStudents(prev => prev.filter(s => s.student_id !== studentId));
+    setSelectedStudentIds(prev => prev.filter(id => id !== studentId));
+
+    setAuditLogs(prev => [
+      {
+        id: `LOG-${Date.now()}`,
+        timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        operator: school.operatorName,
+        action: 'Hapus Data Siswa dari Master',
+        afterValue: `Menghapus record: ${studentName}`,
+        type: 'export'
+      },
+      ...prev
+    ]);
+  };
+
+  // Delete selected students
+  const handleDeleteSelectedStudents = () => {
+    if (selectedStudentIds.length === 0) return;
+    const count = selectedStudentIds.length;
+    setMasterStudents(prev => prev.filter(s => !selectedStudentIds.includes(s.student_id)));
+    setSelectedStudentIds([]);
+
+    setAuditLogs(prev => [
+      {
+        id: `LOG-${Date.now()}`,
+        timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        operator: school.operatorName,
+        action: 'Hapus Massal Siswa Terpilih',
+        afterValue: `Menghapus ${count} record siswa dari Master Data`,
+        type: 'export'
+      },
+      ...prev
+    ]);
+  };
+
+  // Clear all students (empty database)
+  const handleClearAllStudents = () => {
+    const totalBefore = masterStudents.length;
+    setMasterStudents([]);
+    setSelectedStudentIds([]);
+    setIsClearStudentsModalOpen(false);
+
+    setAuditLogs(prev => [
+      {
+        id: `LOG-${Date.now()}`,
+        timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        operator: school.operatorName,
+        action: 'Kosongkan Seluruh Master Data Siswa',
+        afterValue: `Menghapus ${totalBefore} record dummy dari database`,
+        type: 'export'
       },
       ...prev
     ]);
@@ -1625,9 +1685,28 @@ export const Workspace: React.FC<WorkspaceProps> = ({
               </div>
 
               <div className="flex flex-wrap items-center gap-2.5">
+                {selectedStudentIds.length > 0 && (
+                  <button
+                    onClick={handleDeleteSelectedStudents}
+                    className="px-3.5 py-2 rounded-lg text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer animate-fadeIn"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Hapus Terpilih ({selectedStudentIds.length})
+                  </button>
+                )}
+
+                <button
+                  onClick={() => setIsClearStudentsModalOpen(true)}
+                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-white border border-rose-200 text-rose-700 hover:bg-rose-50 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                  title="Hapus / Kosongkan seluruh data dummy siswa"
+                >
+                  <Trash2 className="w-4 h-4 text-rose-600" />
+                  Hapus Data Dummy
+                </button>
+
                 <button
                   onClick={() => exportMasterStudentsToExcel(masterStudents, school)}
-                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-white border border-[#E6E6E6] hover:bg-[#F8F9FA] text-[#031534] transition-colors flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-white border border-[#E6E6E6] hover:bg-[#F8F9FA] text-[#031534] transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-emerald-600" />
                   Export Excel
@@ -1635,7 +1714,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
 
                 <button
                   onClick={onOpenImportModal}
-                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#006b55] text-white hover:bg-emerald-800 transition-colors shadow-xs flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#006b55] text-white hover:bg-emerald-800 transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
                 >
                   <UploadCloud className="w-4 h-4" />
                   Import Dapodik / Excel
@@ -1643,7 +1722,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
 
                 <button
                   onClick={() => setIsAddStudentOpen(true)}
-                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#031534] text-white hover:bg-[#1a2a4a] transition-colors shadow-xs flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#031534] text-white hover:bg-[#1a2a4a] transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   + Tambah Siswa
@@ -1671,7 +1750,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                   onChange={(e) => setStudentClassFilter(e.target.value)}
                   className="text-xs border border-[#E6E6E6] rounded-lg px-3 py-2 focus:outline-none focus:border-[#00B894]"
                 >
-                  <option value="ALL">Semua Kelas</option>
+                  <option value="ALL">Semua Kelas ({masterStudents.length})</option>
                   {allClasses.filter(c => c !== 'ALL').map(c => (
                     <option key={c} value={c}>Kelas {c}</option>
                   ))}
@@ -1685,6 +1764,20 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 <table className="w-full text-left text-xs">
                   <thead className="bg-[#F8F9FA] text-[#44474E] font-semibold border-b border-[#E6E6E6]">
                     <tr>
+                      <th className="p-3.5 w-10 text-center">
+                        <input
+                          type="checkbox"
+                          checked={filteredMasterStudents.length > 0 && selectedStudentIds.length === filteredMasterStudents.length}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedStudentIds(filteredMasterStudents.map(s => s.student_id));
+                            } else {
+                              setSelectedStudentIds([]);
+                            }
+                          }}
+                          className="rounded text-[#00B894] focus:ring-[#00B894] cursor-pointer"
+                        />
+                      </th>
                       <th className="p-3.5">NISN / NIS</th>
                       <th className="p-3.5">Nama Lengkap Siswa</th>
                       <th className="p-3.5">JK</th>
@@ -1692,47 +1785,133 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                       <th className="p-3.5">Wali Kelas</th>
                       <th className="p-3.5">T.P.</th>
                       <th className="p-3.5">Status</th>
+                      <th className="p-3.5 text-center w-16">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E6E6E6]">
-                    {filteredMasterStudents.map(student => (
-                      <tr key={student.student_id} className="hover:bg-[#F8F9FA]">
-                        <td className="p-3.5">
-                          <div className="font-mono font-bold text-[#031534]">{student.nisn}</div>
-                          <div className="font-mono text-[11px] text-[#6C757D]">{student.nis}</div>
-                        </td>
-                        <td className="p-3.5">
-                          <div className="font-bold text-sm text-[#031534]">{student.nama}</div>
-                          <div className="text-[10px] text-[#6C757D] font-mono">{student.source_id}</div>
-                        </td>
-                        <td className="p-3.5 text-[#44474E]">
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${student.gender === 'L' ? 'bg-blue-50 text-blue-700' : 'bg-pink-50 text-pink-700'}`}>
-                            {student.gender}
-                          </span>
-                        </td>
-                        <td className="p-3.5">
-                          <span className="font-bold text-[#031534] bg-[#031534]/5 px-2 py-0.5 rounded">
-                            {student.kelas}
-                          </span>
-                          <span className="text-[11px] text-[#6C757D] ml-1.5">{student.rombel}</span>
-                        </td>
-                        <td className="p-3.5 text-[#44474E]">
-                          {student.wali_kelas || '-'}
-                        </td>
-                        <td className="p-3.5 font-mono text-[#6C757D]">
-                          {student.academic_year}
-                        </td>
-                        <td className="p-3.5">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            {student.status}
-                          </span>
+                    {filteredMasterStudents.length === 0 ? (
+                      <tr>
+                        <td colSpan={9} className="p-8 text-center text-slate-500">
+                          <Database className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+                          <div className="font-bold text-sm text-slate-700">Belum Ada Data Siswa</div>
+                          <p className="text-xs text-slate-500 mt-1">
+                            Database kosong. Silakan gunakan tombol <strong>"Import Dapodik / Excel"</strong> atau <strong>"+ Tambah Siswa"</strong> di atas.
+                          </p>
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      filteredMasterStudents.map(student => {
+                        const isSelected = selectedStudentIds.includes(student.student_id);
+                        const cleanNis = student.nis && student.nis.toLowerCase() !== 'guru' ? student.nis : '-';
+
+                        return (
+                          <tr key={student.student_id} className={`hover:bg-[#F8F9FA] transition-colors ${isSelected ? 'bg-blue-50/40' : ''}`}>
+                            <td className="p-3.5 text-center">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedStudentIds(prev => [...prev, student.student_id]);
+                                  } else {
+                                    setSelectedStudentIds(prev => prev.filter(id => id !== student.student_id));
+                                  }
+                                }}
+                                className="rounded text-[#00B894] focus:ring-[#00B894] cursor-pointer"
+                              />
+                            </td>
+                            <td className="p-3.5">
+                              <div className="font-mono font-bold text-[#031534]">{student.nisn}</div>
+                              <div className="font-mono text-[11px] text-[#6C757D]">{cleanNis}</div>
+                            </td>
+                            <td className="p-3.5">
+                              <div className="font-bold text-sm text-[#031534]">{student.nama}</div>
+                              <div className="text-[10px] text-[#6C757D] font-mono">{student.source_id}</div>
+                            </td>
+                            <td className="p-3.5 text-[#44474E]">
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${student.gender === 'L' ? 'bg-blue-50 text-blue-700' : 'bg-pink-50 text-pink-700'}`}>
+                                {student.gender}
+                              </span>
+                            </td>
+                            <td className="p-3.5">
+                              <span className="font-bold text-[#031534] bg-[#031534]/5 px-2 py-0.5 rounded">
+                                {student.kelas}
+                              </span>
+                              <span className="text-[11px] text-[#6C757D] ml-1.5">{student.rombel}</span>
+                            </td>
+                            <td className="p-3.5 text-[#44474E]">
+                              {student.wali_kelas || '-'}
+                            </td>
+                            <td className="p-3.5 font-mono text-[#6C757D]">
+                              {student.academic_year}
+                            </td>
+                            <td className="p-3.5">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                {student.status}
+                              </span>
+                            </td>
+                            <td className="p-3.5 text-center">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteStudent(student.student_id, student.nama)}
+                                title={`Hapus data ${student.nama}`}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
             </div>
+
+            {/* Modal Clear Master Data Confirmation */}
+            {isClearStudentsModalOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+                <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl p-6 space-y-4">
+                  <div className="flex items-center gap-3 text-rose-600">
+                    <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
+                      <Trash2 className="w-5 h-5 text-rose-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-base text-[#031534]">
+                        Hapus Data Dummy Siswa
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Konfirmasi pembersihan database master
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Saat ini terdapat <strong className="text-slate-900">{masterStudents.length} siswa</strong> di database. Apakah Anda ingin mengosongkan seluruh data ini agar siap diisi dengan data resmi yang baru?
+                  </p>
+
+                  <div className="flex flex-col gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={handleClearAllStudents}
+                      className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>Ya, Kosongkan Seluruh Data (0 Siswa)</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsClearStudentsModalOpen(false)}
+                      className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors cursor-pointer"
+                    >
+                      Batal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Modal Add Student */}
             {isAddStudentOpen && (
