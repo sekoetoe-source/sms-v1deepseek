@@ -11,13 +11,24 @@ import { LandingPage } from './components/LandingPage';
 import { Workspace } from './components/Workspace';
 import { VideoDemoModal } from './components/VideoDemoModal';
 import { ImportMasterModal } from './components/ImportMasterModal';
+import { OperatorLoginModal } from './components/OperatorLoginModal';
+
+// Dummy trial dataset specifically for "Coba Gratis / Mode Simulasi"
+const DUMMY_TRIAL_STUDENTS: Student[] = [
+  { student_id: 'DUMMY-01', source_id: 'SIM-001', nisn: '0098451201', nis: '232407001', nama: 'Ahmad Fauzan (Demo)', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif', academic_year: '2025/2026', gender: 'L', wali_kelas: 'Dra. Hj. Nurhayati, M.Pd.' },
+  { student_id: 'DUMMY-02', source_id: 'SIM-002', nisn: '0098451202', nis: '232407002', nama: 'Budi Santoso (Demo)', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif', academic_year: '2025/2026', gender: 'L', wali_kelas: 'Dra. Hj. Nurhayati, M.Pd.' },
+  { student_id: 'DUMMY-03', source_id: 'SIM-003', nisn: '0098451203', nis: '232407003', nama: 'Citra Kirana Dewi (Demo)', kelas: 'VIII-B', rombel: 'Kelas 8B', status: 'Aktif', academic_year: '2025/2026', gender: 'P', wali_kelas: 'Dra. Hj. Nurhayati, M.Pd.' },
+  { student_id: 'DUMMY-04', source_id: 'SIM-004', nisn: '0098451204', nis: '232407004', nama: 'Fajar Nugraha (Demo)', kelas: 'VIII-A', rombel: 'Kelas 8A', status: 'Aktif', academic_year: '2025/2026', gender: 'L', wali_kelas: 'Drs. Supriyadi' },
+  { student_id: 'DUMMY-05', source_id: 'SIM-005', nisn: '0098451205', nis: '232407005', nama: 'Gita Gutawa (Demo)', kelas: 'VIII-A', rombel: 'Kelas 8A', status: 'Aktif', academic_year: '2025/2026', gender: 'P', wali_kelas: 'Drs. Supriyadi' }
+];
 
 export const App: React.FC = () => {
   // Navigation & View State
   const [currentView, setCurrentView] = useState<'landing' | 'workspace'>('landing');
   const [workspaceTab, setWorkspaceTab] = useState<string>('dashboard');
+  const [workspaceMode, setWorkspaceMode] = useState<'real' | 'dummy'>('real');
 
-  // Core Persistent Application State
+  // Core Persistent Application State (DATA REAL)
   const [school, setSchool] = useState<SchoolProfile>(INITIAL_SCHOOL_PROFILE);
   const [masterStudents, setMasterStudents] = useState<Student[]>(INITIAL_STUDENTS);
   const [documents, setDocuments] = useState<SchoolDocument[]>(INITIAL_DOCUMENTS);
@@ -26,13 +37,24 @@ export const App: React.FC = () => {
   // Modals
   const [isVideoDemoOpen, setIsVideoDemoOpen] = useState<boolean>(false);
   const [isImportMasterOpen, setIsImportMasterOpen] = useState<boolean>(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
   // Navigation Handler
-  const handleNavigate = (view: 'landing' | 'workspace', tab?: string) => {
+  const handleNavigate = (view: 'landing' | 'workspace', tab?: string, mode?: 'real' | 'dummy') => {
     setCurrentView(view);
     if (tab) {
       setWorkspaceTab(tab);
     }
+    if (mode) {
+      setWorkspaceMode(mode);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLoginSuccess = (mode: 'real') => {
+    setWorkspaceMode(mode);
+    setCurrentView('workspace');
+    setWorkspaceTab('dashboard');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -57,22 +79,28 @@ export const App: React.FC = () => {
     setAuditLogs(prev => [newLog, ...prev]);
   };
 
+  // Data routed based on Workspace Mode: Real vs Dummy
+  const activeStudents = workspaceMode === 'real' ? masterStudents : DUMMY_TRIAL_STUDENTS;
+
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] font-body selection:bg-[#00B894]/20 selection:text-[#031534]">
       
-      {/* Top Universal Navbar */}
+      {/* Top Universal Navbar (EcoGrant Style) */}
       <Navbar
         currentView={currentView}
         onNavigate={handleNavigate}
         school={school}
         onOpenDemo={() => setIsVideoDemoOpen(true)}
+        onOpenLogin={() => setIsLoginModalOpen(true)}
+        workspaceMode={workspaceMode}
       />
 
       {/* Main View Router */}
       {currentView === 'landing' ? (
         <LandingPage
-          onOpenWorkspace={(tab) => handleNavigate('workspace', tab || 'dashboard')}
+          onOpenWorkspace={(tab, mode) => handleNavigate('workspace', tab || 'dashboard', mode || 'real')}
           onOpenDemo={() => setIsVideoDemoOpen(true)}
+          onOpenLogin={() => setIsLoginModalOpen(true)}
           school={school}
           masterStudents={masterStudents}
         />
@@ -81,8 +109,8 @@ export const App: React.FC = () => {
           initialTab={workspaceTab}
           school={school}
           setSchool={setSchool}
-          masterStudents={masterStudents}
-          setMasterStudents={setMasterStudents}
+          masterStudents={activeStudents}
+          setMasterStudents={workspaceMode === 'real' ? setMasterStudents : () => {}}
           documents={documents}
           setDocuments={setDocuments}
           auditLogs={auditLogs}
@@ -92,13 +120,21 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* Operator Login Modal (for Real Data Access) */}
+      <OperatorLoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        school={school}
+      />
+
       {/* Interactive Video Demo Modal */}
       <VideoDemoModal
         isOpen={isVideoDemoOpen}
         onClose={() => setIsVideoDemoOpen(false)}
         onLaunchWorkspace={() => {
           setIsVideoDemoOpen(false);
-          handleNavigate('workspace', 'verification');
+          handleNavigate('workspace', 'verification', 'dummy');
         }}
       />
 

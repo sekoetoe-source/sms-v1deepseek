@@ -40,8 +40,9 @@ import { CtaSection } from './CtaSection';
 import { LiveSimulatorModal } from './LiveSimulatorModal';
 
 interface LandingPageProps {
-  onOpenWorkspace: (tab?: string) => void;
+  onOpenWorkspace: (tab?: string, mode?: 'real' | 'dummy') => void;
   onOpenDemo: () => void;
+  onOpenLogin: () => void;
   school: SchoolProfile;
   masterStudents: Student[];
 }
@@ -49,6 +50,7 @@ interface LandingPageProps {
 export const LandingPage: React.FC<LandingPageProps> = ({
   onOpenWorkspace,
   onOpenDemo,
+  onOpenLogin,
   school,
   masterStudents
 }) => {
@@ -101,158 +103,81 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] font-body selection:bg-[#00B894]/20 selection:text-[#031534]">
       
-      {/* 1. HERO SECTION */}
-      <section className="relative pt-6 pb-12 overflow-hidden bg-white border-b border-[#E6E6E6]">
-        {/* Subtle Architectural Grid Background */}
-        <div className="absolute inset-0 opacity-15 pointer-events-none architectural-grid"></div>
+      {/* 1. HERO SECTION (EcoGrant Style) */}
+      <section className="relative pt-12 pb-16 overflow-hidden bg-white border-b border-[#E6E6E6]">
+        {/* Subtle Background Glow */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none architectural-grid"></div>
+        <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-[#134e4a]/5 to-transparent pointer-events-none"></div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
-            
-            {/* Hero Left Text & Controls */}
-            <div className="lg:w-7/12 space-y-4 text-left">
-              
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00B894]/10 text-[#006b55] text-xs font-bold border border-[#00B894]/25 shadow-xs">
-                <Sparkles className="w-3.5 h-3.5 text-[#00B894]" />
-                Platform Otomasi Administrasi Sekolah &amp; Web Service Dapodik
-              </div>
-
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#031534] tracking-tight font-display leading-tight">
-                Otomatisasi Administrasi Sekolah &amp; <br className="hidden sm:inline" />
-                <span className="bg-gradient-to-r from-[#006b55] via-[#00B894] to-[#0284c7] bg-clip-text text-transparent">
-                  Rekonsiliasi Dapodik Presisi
-                </span>
-              </h1>
-
-              <p className="text-xs sm:text-sm text-[#44474E] max-w-xl leading-relaxed">
-                Transformasi berkas fisik absensi harian, surat izin/sakit, dan catatan disiplin siswa menjadi data terverifikasi secara instan menggunakan <strong>AI OCR Engine</strong> &amp; <strong>Dapodik Fuzzy Matcher</strong>.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
-                <button 
-                  onClick={() => onOpenWorkspace('dashboard')}
-                  className="bg-[#FFD000] hover:bg-[#e6bb00] text-[#031534] font-extrabold text-xs px-6 py-3 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group"
-                >
-                  <span>Masuk ke Workspace Operasional</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform text-[#031534]" />
-                </button>
-
-                <button 
-                  onClick={onOpenDemo}
-                  className="bg-white text-[#031534] border-2 border-[#031534] rounded-xl font-bold text-xs px-5 py-3 hover:bg-[#F8F9FA] transition-all flex items-center justify-center gap-2 shadow-2xs active:scale-95"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current text-[#006b55]" />
-                  <span>Lihat Demo Video</span>
-                </button>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className="pt-6 border-t border-[#E6E6E6] flex flex-wrap items-center gap-6 text-xs text-[#6C757D]">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#00B894]" />
-                  <span>Langsung Sinkron Web Service Dapodik</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#00B894]" />
-                  <span>Ekspor Excel &amp; PDF 1-Klik</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#00B894]" />
-                  <span>Standar Keamanan SAIF</span>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Hero Right Visual Diagram & Graphic */}
-            <div className="lg:w-5/12 w-full relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#00E5FF]/20 via-[#00B894]/20 to-[#031534]/10 blur-3xl rounded-3xl -z-10"></div>
-              
-              <div className="bg-white p-6 shadow-2xl border border-[#E6E6E6] relative rounded-2xl space-y-5">
-                
-                {/* Visual Header */}
-                <div className="flex items-center justify-between border-b border-[#E6E6E6] pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <BanyubiruLogo logoUrl={school.logoUrl} banyubiruLogoUrl={school.banyubiruLogoUrl} size="sm" />
-                    <div>
-                      <span className="font-bold text-xs text-[#031534] block">SMS Banyubiru Engine</span>
-                      <span className="text-[10px] text-[#6C757D]">OCR AI + Dapodik Matcher</span>
-                    </div>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Aktif
-                  </span>
-                </div>
-
-                {/* Workflow Architecture Visual Diagram */}
-                <div className="space-y-3 bg-[#F8F9FA] p-4 rounded-xl border border-[#CBD5E1]">
-                  
-                  {/* Step A: Document Input */}
-                  <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-[#E6E6E6] shadow-xs">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-[#031534]/10 flex items-center justify-center text-[#031534]">
-                        <FileText className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-[#031534]">Lembar Absensi Fisik (Foto/Scan)</div>
-                        <div className="text-[10px] text-[#6C757D]">Dokumen Absensi Kelas VIII-B</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-mono text-[#006b55] font-bold">100% Read</span>
-                  </div>
-
-                  {/* Flow Arrow */}
-                  <div className="flex justify-center my-1 text-[#00B894]">
-                    <ChevronDown className="w-4 h-4 animate-bounce" />
-                  </div>
-
-                  {/* Step B: OCR + Dapodik Matching */}
-                  <div className="flex items-center justify-between bg-[#031534] text-white p-3 rounded-lg shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-[#00B894] flex items-center justify-center text-[#031534]">
-                        <Cpu className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-white">AI OCR &amp; Dapodik Matcher</div>
-                        <div className="text-[10px] text-emerald-300">Port 5774 • Token Verified</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] bg-[#00B894]/20 text-[#00B894] px-2 py-0.5 rounded font-mono font-bold">Matched</span>
-                  </div>
-
-                  {/* Flow Arrow */}
-                  <div className="flex justify-center my-1 text-[#00B894]">
-                    <ChevronDown className="w-4 h-4 animate-bounce" />
-                  </div>
-
-                  {/* Step C: Master Data Ready */}
-                  <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-emerald-300 shadow-xs">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-emerald-100 flex items-center justify-center text-emerald-700">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-[#031534]">Master Data Terverifikasi</div>
-                        <div className="text-[10px] text-[#6C757D]">Siap Diunduh ke Excel / PDF</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Ready</span>
-                  </div>
-
-                </div>
-
-                {/* Floating Metric Pill */}
-                <div className="flex items-center justify-between text-xs pt-1 text-[#6C757D]">
-                  <span>Akurasi Pencocokan NISN: <strong className="text-[#031534]">99.4%</strong></span>
-                  <span className="text-emerald-700 font-bold">{masterStudents.length} Siswa Dapodik</span>
-                </div>
-
-              </div>
-            </div>
-
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
+          
+          {/* Top Green Pill Badge (EcoGrant Style) */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 text-[#134e4a] text-xs font-bold border border-emerald-300 shadow-2xs">
+            <Sparkles className="w-4 h-4 text-[#00B894]" />
+            <span>Platform Otomasi Administrasi Sekolah &amp; Dapodik Berbasis AI #1</span>
           </div>
+
+          {/* Main Headline (EcoGrant Style: Large, Bold, High-Impact) */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-[#0b1c30] tracking-tight font-display leading-[1.15] max-w-4xl mx-auto">
+            Tulis Rekapitulasi &amp; Verifikasi Berkas Sekolah Berstandar Dapodik dalam{' '}
+            <span className="text-[#006b55]">Hitungan Menit</span>, Bukan Hari.
+          </h1>
+
+          {/* Subheadline (EcoGrant Style) */}
+          <p className="text-sm sm:text-base text-[#44474E] max-w-2xl mx-auto leading-relaxed">
+            Hasilkan rekapitulasi presensi harian, verifikasi berkas fisik (Ijazah, KK, Akta), dan sinkronisasi Web Service Dapodik resmi secara otomatis menggunakan <strong>AI OCR Engine</strong> &amp; <strong>Dapodik Fuzzy Matcher</strong>.
+          </p>
+
+          {/* Centered Dual CTA Buttons (EcoGrant Style) */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
+            
+            {/* Primary CTA: Coba Gratis Sekarang -> Dummy Simulation */}
+            <button 
+              onClick={() => onOpenWorkspace('dashboard', 'dummy')}
+              className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-xs sm:text-sm font-extrabold bg-[#134e4a] hover:bg-[#0f766e] text-white transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-95 group"
+            >
+              <span>Coba Gratis Sekarang</span>
+              <ArrowRight className="w-4 h-4 text-emerald-300 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            {/* Secondary CTA: Demo Interaktif */}
+            <button 
+              onClick={onOpenDemo}
+              className="w-full sm:w-auto px-6 py-3.5 bg-white text-[#0b1c30] border-2 border-slate-300 hover:border-slate-800 rounded-xl font-bold text-xs sm:text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+            >
+              <Play className="w-4 h-4 fill-current text-[#134e4a]" />
+              <span>Coba Demo Interaktif</span>
+            </button>
+          </div>
+
+          {/* Operator Direct Link */}
+          <div className="pt-2 text-xs text-slate-500">
+            Sudah memiliki akun operator sekolah?{' '}
+            <button 
+              onClick={onOpenLogin}
+              className="text-[#134e4a] font-bold hover:underline cursor-pointer inline-flex items-center gap-1"
+            >
+              <span>Masuk ke Workspace Data Real</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Trust Indicators Banner */}
+          <div className="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs text-[#6C757D]">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Web Service Dapodik (Port 5774)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Ekspor Excel &amp; PDF 1-Klik</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Standar Keamanan SAIF</span>
+            </div>
+          </div>
+
         </div>
       </section>
 

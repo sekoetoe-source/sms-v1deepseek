@@ -7,97 +7,143 @@ import {
   FileText, 
   CheckCircle2, 
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  Cpu,
+  LogIn
 } from 'lucide-react';
 import { SchoolProfile } from '../types';
-import { BanyubiruLogo, BanyubiruBrandLogo } from './BanyubiruLogo';
 
 interface NavbarProps {
   currentView: 'landing' | 'workspace';
-  onNavigate: (view: 'landing' | 'workspace', tab?: string) => void;
+  onNavigate: (view: 'landing' | 'workspace', tab?: string, mode?: 'real' | 'dummy') => void;
   school: SchoolProfile;
   onOpenDemo: () => void;
+  onOpenLogin: () => void;
+  workspaceMode?: 'real' | 'dummy';
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
   currentView, 
   onNavigate, 
   school,
-  onOpenDemo 
+  onOpenDemo,
+  onOpenLogin,
+  workspaceMode = 'real'
 }) => {
   return (
     <header className="sticky top-0 z-50 bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#E6E6E6] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
         
-        {/* Brand Left */}
+        {/* Brand Left (EcoGrant Style) */}
         <div className="flex items-center">
           <button 
             onClick={() => onNavigate('landing')}
-            className="flex items-center group focus:outline-none shrink-0 bg-[#020b1a] px-3.5 py-1.5 rounded-xl border border-[#00E5FF]/40 shadow-2xs group-hover:border-[#00E5FF] group-hover:shadow-[0_0_12px_rgba(0,229,255,0.25)] transition-all"
+            className="flex items-center gap-3 group focus:outline-none shrink-0 text-left cursor-pointer"
           >
-            <img 
-              src={school.banyubiruLogoUrl} 
-              alt="Banyubiru Digital Services Logo" 
-              className="h-10 w-auto object-contain rounded-md group-hover:scale-105 transition-transform" 
-            />
+            <div className="w-10 h-10 rounded-xl bg-[#020b1a] flex items-center justify-center p-1.5 shadow-2xs border border-[#00E5FF]/30 group-hover:border-[#00E5FF] transition-all">
+              <img 
+                src={school.banyubiruLogoUrl} 
+                alt="Banyubiru Logo" 
+                className="h-full w-auto object-contain rounded" 
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-1 font-['Plus_Jakarta_Sans',sans-serif] font-black text-lg text-[#0b1c30] tracking-tight group-hover:text-[#134e4a] transition-colors leading-none">
+                <span>Banyubiru</span>
+                <span className="text-[#00B894]">.ai</span>
+              </div>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#6C757D] block mt-1">
+                SCHOOL DATA &amp; OCR ENGINE
+              </span>
+            </div>
           </button>
         </div>
 
-        {/* Navigation Links for Landing */}
+        {/* Center Navigation Links (EcoGrant Style) */}
         {currentView === 'landing' ? (
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-[#031534]">
-            <a href="#fitur" className="hover:text-[#006b55] transition-colors py-1">Fitur</a>
-            <a href="#workflow-section" className="hover:text-[#006b55] transition-colors py-1">Cara Kerja</a>
-            <a href="#human-in-the-loop-section" className="hover:text-[#006b55] transition-colors flex items-center gap-1.5 py-1">
-              <Sparkles className="w-3.5 h-3.5 text-[#00B894]" />
-              Demo Interaktif
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-xs font-bold text-[#0b1c30]">
+            <a href="#features-bento-section" className="hover:text-[#134e4a] transition-colors py-1">
+              Keunggulan
             </a>
-            <a href="#features-bento-section" className="hover:text-[#006b55] transition-colors py-1">Keunggulan</a>
-            <a href="#faq" className="hover:text-[#006b55] transition-colors py-1">FAQ</a>
+            <a href="#fitur" className="hover:text-[#134e4a] transition-colors py-1">
+              Modul Fitur
+            </a>
+            <a href="#workflow-section" className="hover:text-[#134e4a] transition-colors py-1">
+              Cara Kerja
+            </a>
+            <a href="#problem-section" className="hover:text-[#134e4a] transition-colors py-1">
+              Solusi Peran
+            </a>
+            <a href="#human-in-the-loop-section" className="hover:text-[#134e4a] transition-colors py-1 flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#00B894]" />
+              <span>Live Simulator</span>
+            </a>
+            <a href="#faq" className="hover:text-[#134e4a] transition-colors py-1">
+              FAQ
+            </a>
           </nav>
         ) : (
           <div className="hidden md:flex items-center gap-3 text-xs">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Mode Workspace Operasional
+            <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold border ${
+              workspaceMode === 'real'
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                : 'bg-amber-50 text-amber-900 border-amber-300'
+            }`}>
+              <span className={`w-2 h-2 rounded-full animate-pulse ${
+                workspaceMode === 'real' ? 'bg-emerald-600' : 'bg-amber-600'
+              }`}></span>
+              <span>{workspaceMode === 'real' ? 'Mode Data Real (Operator Sekolah)' : 'Mode Uji Coba Gratis (Data Dummy)'}</span>
             </span>
           </div>
         )}
 
-        {/* Actions Right */}
+        {/* Actions Right (EcoGrant Style: "Masuk" + "Coba Gratis →") */}
         <div className="flex items-center gap-3 shrink-0">
           {currentView === 'landing' ? (
             <>
+              {/* Masuk (Operator Real Data Login) */}
               <button 
-                onClick={onOpenDemo}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#031534] hover:bg-[#EDEEEF] transition-colors"
+                onClick={onOpenLogin}
+                className="text-xs font-extrabold text-[#0b1c30] hover:text-[#134e4a] px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
               >
-                <FileText className="w-3.5 h-3.5 text-[#006b55]" />
-                Demo Video
+                Masuk
               </button>
+
+              {/* Coba Gratis → (Forest Green EcoGrant Button for Dummy Simulation) */}
               <button 
-                onClick={() => onNavigate('workspace', 'dashboard')}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-extrabold bg-[#031534] text-white hover:bg-[#006b55] transition-all shadow-2xs hover:shadow active:scale-95 whitespace-nowrap"
+                onClick={() => onNavigate('workspace', 'dashboard', 'dummy')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-extrabold bg-[#134e4a] hover:bg-[#0f766e] text-white transition-all shadow-sm hover:shadow active:scale-95 whitespace-nowrap cursor-pointer"
               >
-                <span>Masuk ke Workspace</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#00B894]" />
+                <span>Coba Gratis</span>
+                <ArrowRight className="w-3.5 h-3.5 text-emerald-300" />
               </button>
             </>
           ) : (
             <>
               <button 
                 onClick={() => onNavigate('landing')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#44474E] hover:bg-[#EDEEEF] border border-[#E6E6E6] transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#44474E] hover:bg-[#EDEEEF] border border-[#E6E6E6] transition-colors cursor-pointer"
               >
                 <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-                Halaman Utama
+                <span>Halaman Depan</span>
               </button>
-              <button 
-                onClick={() => onNavigate('workspace', 'documents')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#F97316] text-white hover:bg-[#ea580c] transition-colors shadow-2xs"
-              >
-                + Upload Dokumen
-              </button>
+
+              {workspaceMode === 'dummy' ? (
+                <button 
+                  onClick={onOpenLogin}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold bg-[#134e4a] text-white hover:bg-[#0f766e] transition-colors shadow-2xs cursor-pointer"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-emerald-300" />
+                  <span>Masuk Data Real</span>
+                </button>
+              ) : (
+                <button 
+                  onClick={() => onNavigate('workspace', 'documents', 'real')}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#006b55] text-white hover:bg-[#005241] transition-colors shadow-2xs cursor-pointer"
+                >
+                  + Upload Dokumen Real
+                </button>
+              )}
             </>
           )}
         </div>
